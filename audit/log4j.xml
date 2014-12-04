@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <appender name="debug" class="org.apache.log4j.RollingFileAppender">
+        <param name="maxFileSize" value="1000KB" />
+        <param name="maxBackupIndex" value="5" />
+        <param name="File" value="${user.dir}/logs/debug.log" />
+        <param name="threshold" value="debug" />
+        <param name="append" value="false" />
+        <param name="immediateFlush" value="true" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %-5p %c{1} [%t] : %m%n" />
+        </layout>
+    </appender>
+    
+    <appender name="stat" class="org.apache.log4j.RollingFileAppender">
+        <param name="maxFileSize" value="1000KB" />
+        <param name="maxBackupIndex" value="5" />
+        <param name="File" value="${user.dir}/logs/stat.log" />
+        <param name="threshold" value="debug" />
+        <param name="append" value="false" />
+        <param name="immediateFlush" value="true" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %-5p %c{1} [%t] : %m%n" />
+        </layout>
+    </appender>
+    
+    <appender name="skip" class="org.apache.log4j.RollingFileAppender">
+        <param name="maxFileSize" value="1000KB" />
+        <param name="maxBackupIndex" value="5" />
+        <param name="File" value="${user.dir}/logs/skip.log" />
+        <param name="threshold" value="debug" />
+        <param name="append" value="false" />
+        <param name="immediateFlush" value="true" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %m%n" />
+        </layout>
+    </appender>
+    
+    <appender name="error" class="org.apache.log4j.RollingFileAppender">
+        <param name="maxFileSize" value="1000KB" />
+        <param name="maxBackupIndex" value="5" />
+        <param name="File" value="${user.dir}/logs/debug.log" />
+        <param name="threshold" value="error" />
+        <param name="append" value="false" />
+        <param name="immediateFlush" value="true" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %-5p %c{1} [%t] : %m%n" />
+        </layout>
+    </appender>
+
+    <logger name="stat" additivity="false">
+        <level value="debug" />
+        <appender-ref ref="stat" />
+    </logger>
+    
+    <logger name="skip" additivity="false">
+        <level value="debug" />
+        <appender-ref ref="skip" />
+    </logger>
+    
+    <root>
+        <priority value="debug" />
+        <appender-ref ref="debug" />
+        <appender-ref ref="error" />
+    </root>
+
+</log4j:configuration>
+

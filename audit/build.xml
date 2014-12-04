@@ -1,0 +1,58 @@
+<project default="bundle" basedir=".">
+
+    <!-- set global properties for this build -->
+    <property name="src" value="src" />
+    <property name="build" value="build" />
+    <property name="lib" value="lib" />
+    <property name="bundle" value="bundle" />
+    
+    <target name="classpath">
+        <path id="local.class.path">
+            <fileset dir="${lib}">
+                <include name="**/*.jar" />
+            </fileset>
+            <pathelement location="${build}" />
+            <pathelement location="${src}" />
+        </path>
+    </target>
+
+    <target name="compile" depends="classpath">
+        <mkdir dir="${build}" />
+        <javac srcdir="${src}" destdir="${build}" debug="on" nowarn="on">
+            <classpath>
+                <path refid="local.class.path" />
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="clean">
+        <delete dir="${build}"/>
+    </target>
+
+    <target name="dist" depends="clean,compile">
+        <delete file="webheal.jar"/>
+        <copy todir="${build}">
+            <fileset dir="${src}">
+                <include name="**/*.xml" />
+            </fileset>
+        </copy>
+        <jar destfile="webheal.jar"  basedir="${build}"/>
+    </target>
+
+    <target name="bundle" depends="dist">
+        <delete dir="${bundle}"/>
+        <mkdir dir="${bundle}" />
+        <copy todir="${bundle}/lib">
+            <fileset dir="${lib}">
+                <include name="*.jar" />
+            </fileset>
+        </copy>
+        <copy todir="${bundle}/lib" file="webheal.jar"/>
+        <copy todir="${bundle}" file="log4j.xml"/>
+        <copy todir="${bundle}" file="libjpcap.so"/>
+        <copy todir="${bundle}" file="test.conf"/>
+        <copy todir="${bundle}" file="readme.txt"/>
+        <delete file="webheal.zip"/>
+        <zip destfile="webheal.zip"  basedir="${bundle}" includes="*/**"/>
+    </target>
+</project>
