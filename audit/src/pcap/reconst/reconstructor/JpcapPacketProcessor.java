@@ -8,9 +8,11 @@ import pcap.reconst.beans.JpcapTcpPacket;
 public class JpcapPacketProcessor implements PacketReceiver {
     int packetNumber = 0;
     private PacketReassembler packetReassembler;
+    private final boolean verbose;
 
-    public JpcapPacketProcessor(PacketReassembler packetReassembler) {
+    public JpcapPacketProcessor(PacketReassembler packetReassembler,boolean verbose) {
         this.packetReassembler = packetReassembler;
+        this.verbose = verbose;
     }
 
     public int getTotalNumberOfPackets() {
@@ -21,7 +23,9 @@ public class JpcapPacketProcessor implements PacketReceiver {
     public void receivePacket(Packet packet) {
         packetNumber++;
         if ( packet instanceof TCPPacket) {
-            //System.out.println(String.format("processing #%d %s", packetNumber, packet));
+            if ( verbose ) {
+                System.out.println(String.format("processing #%d %s", packetNumber, packet));
+            }
             packetReassembler.reassemble(new JpcapTcpPacket((TCPPacket) packet));
         }
     }

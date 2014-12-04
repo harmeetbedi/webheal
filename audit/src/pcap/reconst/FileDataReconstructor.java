@@ -22,7 +22,7 @@ public class FileDataReconstructor {
         try {
             String filename = "dump.pcap";
             FileDataReconstructor fileDataReconstructor = new FileDataReconstructor();
-            Map<TcpConnection, TcpReassembler> map = fileDataReconstructor.reconstruct(new File(filename), new JpcapReconstructor(new PacketReassembler()));
+            Map<TcpConnection, TcpReassembler> map = fileDataReconstructor.reconstruct(new File(filename), new JpcapReconstructor(new PacketReassembler(),true));
             Http http = new Http(map);
             Map<TcpConnection, List<HttpRequestResponse>> httpPackets = http.packetize();
             System.out.println("number of packets " + httpPackets.size());

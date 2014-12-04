@@ -11,20 +11,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import jpcap.JpcapCaptor;
-import jpcap.NetworkInterface;
-
-import org.apache.commons.io.FileUtils;
-
-import pcap.reconst.HttpDecoder;
-import pcap.reconst.beans.InputData;
 import pcap.reconst.beans.TcpConnection;
-import pcap.reconst.output.HttpDecodedOutput;
 import pcap.reconst.output.HttpFlow;
 import pcap.reconst.output.HttpRequestResponse;
 import pcap.reconst.reconstructor.JpcapPacketProcessor;
 import pcap.reconst.reconstructor.PacketReassembler;
-import pcap.reconst.reconstructor.Reconstructor;
 import pcap.reconst.reconstructor.TcpReassembler;
 
 public abstract class AbstractSniffer
@@ -36,27 +27,30 @@ public abstract class AbstractSniffer
     protected final Set<String> notContentType;
     protected final Set<String> hostsFilter;
     protected final IHttpHandler handler;
+    protected final boolean verbose;
     private static DateFormat TIME_FMT = new SimpleDateFormat("yyMMddHHss");
     private static NumberFormat SEQ_FMT = new DecimalFormat("000");
 
-    public AbstractSniffer(PacketReassembler pr, Set<String> hostsFilter, Set<String> notExt, Set<String> notContentType, File tcpFlowDir, IHttpHandler handler) throws IOException {
+    public AbstractSniffer(PacketReassembler pr, Set<String> hostsFilter, Set<String> notExt, Set<String> notContentType, File tcpFlowDir, IHttpHandler handler, boolean verbose) throws IOException {
         this.notExt = notExt;
         this.notContentType = notContentType;
         this.hostsFilter = hostsFilter;
         this.tcpFlowDir = tcpFlowDir;
         this.pr = pr;
-        jpcapProcessor = new JpcapPacketProcessor(pr);
+        jpcapProcessor = new JpcapPacketProcessor(pr,verbose);
         this.handler = handler;
+        this.verbose = verbose;
     }
 
-    public AbstractSniffer(PacketReassembler pr, IHttpHandler handler) throws IOException {
+    public AbstractSniffer(PacketReassembler pr, IHttpHandler handler, boolean verbose) throws IOException {
         this.notExt = null;
         this.notContentType = null;
         this.hostsFilter = null;
         this.tcpFlowDir = null;
         this.pr = pr;
-        jpcapProcessor = new JpcapPacketProcessor(pr);
+        jpcapProcessor = new JpcapPacketProcessor(pr,verbose);
         this.handler = handler;
+        this.verbose = verbose;
     }
 
     public abstract void init() throws IOException; 
@@ -70,7 +64,9 @@ public abstract class AbstractSniffer
     }
     
     protected void processConnections(Map<TcpConnection, TcpReassembler> map) throws IOException {
-        System.out.println("Connections to process = " + map.size());
+        if ( verbose ) {
+            System.out.println("Connections to process = " + map.size());
+        }
         Map<TcpConnection, List<HttpRequestResponse>> httpPackets = HttpFlow.packetize(map,hostsFilter,notExt,notContentType);
         System.out.println("httpstreams to process = " + httpPackets.size());
         String dt = TIME_FMT.format(new Date());

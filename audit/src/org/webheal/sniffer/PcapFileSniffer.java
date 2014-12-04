@@ -15,13 +15,13 @@ public class PcapFileSniffer extends AbstractSniffer
 {
     private final File src;
 
-    public PcapFileSniffer(File src, Set<String> hostsFilter, Set<String> notExt, Set<String> notContentType, File tcpFlowDir, IHttpHandler handler) throws IOException {
-        super(new HttpPacketReassembler(), hostsFilter, notExt, notContentType, tcpFlowDir, handler);
+    public PcapFileSniffer(File src, Set<String> hostsFilter, Set<String> notExt, Set<String> notContentType, File tcpFlowDir, IHttpHandler handler,boolean verbose) throws IOException {
+        super(new HttpPacketReassembler(), hostsFilter, notExt, notContentType, tcpFlowDir, handler,verbose);
         this.src = src;
     }
 
-    public PcapFileSniffer(File src, IHttpHandler handler) throws IOException {
-        super(new HttpPacketReassembler(), handler);
+    public PcapFileSniffer(File src, IHttpHandler handler,boolean verbose) throws IOException {
+        super(new HttpPacketReassembler(), handler,verbose);
         this.src = src;
     }
 
@@ -29,7 +29,7 @@ public class PcapFileSniffer extends AbstractSniffer
     {
         JpcapCaptor captor = JpcapCaptor.openFile(src.getAbsolutePath());
         //captor.setFilter("tcp", true);
-        JpcapPacketProcessor jpcapPacketProcessor = new JpcapPacketProcessor(pr);
+        JpcapPacketProcessor jpcapPacketProcessor = new JpcapPacketProcessor(pr,verbose);
         captor.processPacket(-1, jpcapPacketProcessor);
         captor.close();
     }

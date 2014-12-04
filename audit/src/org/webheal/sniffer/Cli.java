@@ -1,9 +1,7 @@
 package org.webheal.sniffer;
 
 import java.io.File;
-import java.io.PrintWriter;
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -29,7 +27,7 @@ import pcap.reconst.output.HttpRequestResponse;
 
 public class Cli
 {
-    public static void main(String[] args) throws Exception {
+    public static void main1(String[] args) throws Exception {
         System.out.println("libpath="+System.getProperty("java.library.path"));
         System.loadLibrary("jpcap");
         System.out.println("pcap successfully loaded");
@@ -53,15 +51,16 @@ public class Cli
         Set<String> notExt = Utils.toSet("gif,css,jpg,jpeg,png,xls,pdf,xlsx,doc,csv,txt,js,mov,ico", ",");
         Set<String> notContentType = Utils.toSet("image,xml", ",");
         File file = new File("/Users/harmeet/tmp/chrome/PCAP/CRS/4.pcap");
-        PcapFileSniffer capture = new PcapFileSniffer(file,null,notExt,notContentType, null,handler);
+        PcapFileSniffer capture = new PcapFileSniffer(file,null,notExt,notContentType, null,handler,true);
         capture.init();
         capture.drainPackets();
     }
-    public static void main1(String[] args) throws Exception
+    public static void main(String[] args) throws Exception
     {
         if ( args.length == 0 ) {
-            args = "-i en1 -m yahoo.conf -h yahoo -t 3 -dh ./output/hits -ne gif,css,jpg,jpeg,png,xls,pdf,xlsx,doc,csv,txt,js,mov,ico -nt image,xml".split(" ");
-            args = "-f ./pcap/CRS/100.pcapng -m rules.conf -ne gif,css,jpg,jpeg,png,xls,pdf,xlsx,doc,csv,txt,js,mov,ico -nt image,xml".split(" ");
+            //args = "-i en0 -m test.conf -t 30 -dh ./output/hits -ne gif,css,jpg,jpeg,png,xls,pdf,xlsx,doc,csv,txt,js,mov,ico -nt image,xml".split(" ");
+            //args = "-f dump.pcap -m test.conf -t 3 -dh ./output/hits -ne gif,css,jpg,jpeg,png,xls,pdf,xlsx,doc,csv,txt,js,mov,ico -nt image,xml".split(" ");
+            //args = "-f ./pcap/CRS/100.pcapng -m rules.conf -ne gif,css,jpg,jpeg,png,xls,pdf,xlsx,doc,csv,txt,js,mov,ico -nt image,xml".split(" ");
         }
         // configuration file
         File logConfig = new File("./log4j.xml");
@@ -87,6 +86,7 @@ public class Cli
         options.addOption("ne", true, "(optional) ignore requests for comma separated list of extensions");
         options.addOption("nt", true, "(optional) ignore requests that result in comma separated list of content type response");
         options.addOption("dt", true, "(optional) if present, directory where tcp flow files are stored. If not specified, tcp flows trace files are not created");
+        options.addOption("v", false, "(optional) if present, verbose output");
         CommandLine cmd = getCmdLine(options, payloadTestOptions, args);
 
         final boolean testMode;
@@ -103,6 +103,7 @@ public class Cli
                 return;
             }
         }
+        final boolean verbose = cmd.hasOption('v'); 
 
         System.out.println("libpath="+System.getProperty("java.library.path"));
         System.loadLibrary("jpcap");
@@ -152,11 +153,11 @@ public class Cli
         }
         //IHttpHandler handler = IHttpHandler.Factory.trace();
         if ( testMode ) {
-            PcapFileSniffer capture = new PcapFileSniffer(pcap,hostsFilter,notExt,notContentType,tcpFlowDir,handler);
+            PcapFileSniffer capture = new PcapFileSniffer(pcap,hostsFilter,notExt,notContentType,tcpFlowDir,handler,verbose);
             capture.init();
             capture.drainPackets();
         } else {
-            PassiveSniffer capture = new PassiveSniffer(interfaceName, Utils.getTime(maxIdle),hostsFilter,notExt,notContentType,tcpFlowDir,handler);
+            PassiveSniffer capture = new PassiveSniffer(interfaceName, Utils.getTime(maxIdle),hostsFilter,notExt,notContentType,tcpFlowDir,handler,verbose);
             new Thread(capture,"sniffer").start();
             capture.init();
         }

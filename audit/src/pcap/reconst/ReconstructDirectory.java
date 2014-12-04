@@ -51,7 +51,7 @@ public class ReconstructDirectory {
 
     public static void main(String[] args) {
         try {
-            ReconstructDirectory reconstructDirectory = new ReconstructDirectory(args[0], new JpcapReconstructor(new PacketReassembler()));
+            ReconstructDirectory reconstructDirectory = new ReconstructDirectory(args[0], new JpcapReconstructor(new PacketReassembler(),true));
             reconstructDirectory.reconstruct();
         } catch (Exception e) {
             e.printStackTrace();

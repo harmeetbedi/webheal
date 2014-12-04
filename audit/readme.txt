@@ -4,7 +4,7 @@ Install on Linux OS
 2. Ensure JDK 1.7 is installed and working 
 3. select and create install directory e.g. ~/webheal
 4. Unzip webheal.zip in this directory
-5. find patch using command 'echo $PATH'. Copy libjpcap.so in a folder that is in your path
+5. find path using command 'echo $PATH'. Copy libjpcap.so in a folder that is in your path
 To troubleshoot pcap install
 1. Install tcpdump using your package manager e.g. with command $ sudo yum install tcpdump
 
@@ -40,6 +40,7 @@ usage: java org.webheal.sniffer.Cli
  -nt <arg>   (optional) ignore requests that result in comma separated
              list of content type response
  -t <arg>    max idle time for a network connection
+ -v          (optional) verbose output
 
 
 Operational notes

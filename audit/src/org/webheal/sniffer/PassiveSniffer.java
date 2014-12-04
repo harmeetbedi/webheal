@@ -15,15 +15,15 @@ public class PassiveSniffer extends AbstractSniffer implements Runnable
 {
     private final String interfaceName;
 
-    public PassiveSniffer(String interfaceName, long maxIdleTime, Set<String> hostsFilter, Set<String> notExt, Set<String> notContentType, File tcpFlowDir, IHttpHandler handler) throws IOException {
-        super(new TimedPacketReassembler(maxIdleTime), hostsFilter, notExt, notContentType, tcpFlowDir, handler);
+    public PassiveSniffer(String interfaceName, long maxIdleTime, Set<String> hostsFilter, Set<String> notExt, Set<String> notContentType, File tcpFlowDir, IHttpHandler handler, boolean verbose) throws IOException {
+        super(new TimedPacketReassembler(maxIdleTime), hostsFilter, notExt, notContentType, tcpFlowDir, handler,verbose);
         this.interfaceName = interfaceName;
     }
     public void init() throws IOException { 
         NetworkInterface[] nis = JpcapCaptor.getDeviceList();
         NetworkInterface selected = null;
         for ( NetworkInterface ni : nis ) {
-            ///System.out.println("Found interface : "+ni.name);
+            System.out.println("Found interface : "+ni.name);
             if ( ni.name.equals(interfaceName) ) {
                 selected = ni;
             }
@@ -42,7 +42,7 @@ public class PassiveSniffer extends AbstractSniffer implements Runnable
         while ( true ) {
             try {
                 drainPackets();
-            } catch (IOException e1) {
+            } catch (Throwable e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
