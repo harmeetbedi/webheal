@@ -95,7 +95,7 @@ public class ModSecRuleParser
     
     public static void main(String[] args) throws IOException
     {
-        File file = new File("/Users/harmeet/dev/kodemuse/ext/wafportal/testconfig/rules/demo.testfire.net.conf");
+        File file = new File("./test.conf");
         List<ModSecRule> list = getRules(file);
         int idx = 0;
         for (ModSecRule rule : list) {

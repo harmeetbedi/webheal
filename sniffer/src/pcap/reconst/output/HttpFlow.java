@@ -38,13 +38,13 @@ public class HttpFlow {
 
     public final static int ZERO = 0;
 
-    public static Map<TcpConnection, List<HttpRequestResponse>> packetize(Map<TcpConnection, TcpReassembler> map, Set<String> hostsFilter, Set<String> ignoreUriExt, Set<String> ignoreContentType) {
+    public static Map<TcpConnection, List<HttpRequestResponse>> packetize(Map<TcpConnection, TcpReassembler> map, Set<String> hostsFilter, Set<String> ignoreUriExt, Set<String> ignoreContentType,boolean verbose) {
         Map<TcpConnection, List<HttpRequestResponse>> result = new HashMap<TcpConnection, List<HttpRequestResponse>>();
         for (TcpConnection connection : map.keySet()) {
-            //System.out.println("HttpFlow conn: "+connection);
+            if ( verbose ) { System.out.println("HttpFlow conn: "+connection); }
             TcpReassembler reassembler = map.get(connection);
             List<RequestResponse> rrList = reassembler.getRequestResponse();
-            //System.out.println("HttpFlow conn: "+connection+", rrList="+rrList.size());
+            if ( verbose ) { System.out.println("HttpFlow conn: "+connection+", rrList="+rrList.size()); }
             for ( RequestResponse rr : rrList ) {
                 byte[] requestData = rr.request.toBytes();
                 byte[] responseData = rr.response.toBytes();
@@ -57,7 +57,7 @@ public class HttpFlow {
                     requestUriBytes = Utils.slice(requestData,uriIndex+1,requestIdx-(uriIndex+1));
                     requestUri = new String(requestUriBytes);
                 }
-                //System.out.println(String.format("http packet : %s, request=%d, response=%d, uriIdx=%d, reqIdx=%d, respIdx=%d", connection, requestData.length, responseData.length, uriIndex, requestIdx, responseIdx));
+                if ( verbose ) { System.out.println(String.format("http packet : %s, request=%d, response=%d, uriIdx=%d, reqIdx=%d, respIdx=%d", connection, requestData.length, responseData.length, uriIndex, requestIdx, responseIdx)); }
                 if ( requestUri == null || requestIdx < 0  || responseIdx != 0 ) {
 //                    String reqStr = new String(requestData);
 //                    String respStr = new String(responseData);

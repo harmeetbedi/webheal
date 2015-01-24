@@ -51,7 +51,7 @@ public class Cli
         Set<String> notExt = Utils.toSet("gif,css,jpg,jpeg,png,xls,pdf,xlsx,doc,csv,txt,js,mov,ico", ",");
         Set<String> notContentType = Utils.toSet("image,xml", ",");
         File file = new File("/Users/harmeet/tmp/chrome/PCAP/CRS/4.pcap");
-        PcapFileSniffer capture = new PcapFileSniffer(file,null,notExt,notContentType, null,handler,true);
+        PcapFileSniffer capture = new PcapFileSniffer(file,null,80,notExt,notContentType, null,handler,true);
         capture.init();
         capture.drainPackets();
     }
@@ -60,7 +60,7 @@ public class Cli
         if ( args.length == 0 ) {
             //args = "-i en0 -m test.conf -t 30 -dh ./output/hits -ne gif,css,jpg,jpeg,png,xls,pdf,xlsx,doc,csv,txt,js,mov,ico -nt image,xml".split(" ");
             //args = "-f dump.pcap -m test.conf -t 3 -dh ./output/hits -ne gif,css,jpg,jpeg,png,xls,pdf,xlsx,doc,csv,txt,js,mov,ico -nt image,xml".split(" ");
-            //args = "-f ./pcap/CRS/100.pcapng -m rules.conf -ne gif,css,jpg,jpeg,png,xls,pdf,xlsx,doc,csv,txt,js,mov,ico -nt image,xml".split(" ");
+            args = "-f /Users/harmeet/tmp/test.pcap -m test.conf -ne gif,css,jpg,jpeg,png,xls,pdf,xlsx,doc,csv,txt,js,mov,ico -nt image,xml".split(" ");
         }
         // configuration file
         File logConfig = new File("./log4j.xml");
@@ -70,15 +70,18 @@ public class Cli
         payloadTestOptions.addOption("f", true, "pcap file containing test payload");
         payloadTestOptions.addOption("m", true, "mod security rule file");
         payloadTestOptions.addOption("h", true, "(optional) comma separated list of hosts in http request that are tracked");
+        payloadTestOptions.addOption("p", true, "(optional) http port that is tracked. default is 80");
         payloadTestOptions.addOption("C", true, "file with each line having format <comma separated hostnames>=<rule configuration file>. If this is specified, -m and -h parmeters are ignored");
         payloadTestOptions.addOption("ne", true, "(optional) ignore requests for comma separated list of extensions");
         payloadTestOptions.addOption("nt", true, "(optional) ignore requests that result in comma separated list of content type response");
         payloadTestOptions.addOption("dt", true, "(optional) if present, directory where tcp flow files are stored. If not specified, tcp flows trace files are not created");
+        payloadTestOptions.addOption("v", false, "(optional) if present, verbose output");
 
         Options options = new Options();
         options.addOption("i", true, "network interface");
         options.addOption("m", true, "mod security rule file");
         options.addOption("h", true, "(optional) comma separated list of hosts in http request that are tracked");
+        options.addOption("p", true, "(optional) http port that is tracked. default is 80");
         options.addOption("C", true, "file with each line having format <comma separated hostnames>=<rule configuration file>. If this is specified, -m and -h parmeters are ignored");
         options.addOption("t", true, "max idle time for a network connection");
         //options.addOption("s", false, "(optional) ssl or not. default is not present");
@@ -103,7 +106,8 @@ public class Cli
                 return;
             }
         }
-        final boolean verbose = cmd.hasOption('v'); 
+        final boolean verbose = cmd.hasOption('v');
+        int httpPort = cmd.hasOption('p') ? Integer.parseInt(cmd.getOptionValue("p")) : 80;
 
         System.out.println("libpath="+System.getProperty("java.library.path"));
         System.loadLibrary("jpcap");
@@ -153,11 +157,11 @@ public class Cli
         }
         //IHttpHandler handler = IHttpHandler.Factory.trace();
         if ( testMode ) {
-            PcapFileSniffer capture = new PcapFileSniffer(pcap,hostsFilter,notExt,notContentType,tcpFlowDir,handler,verbose);
+            PcapFileSniffer capture = new PcapFileSniffer(pcap,hostsFilter,httpPort,notExt,notContentType,tcpFlowDir,handler,verbose);
             capture.init();
             capture.drainPackets();
         } else {
-            PassiveSniffer capture = new PassiveSniffer(interfaceName, Utils.getTime(maxIdle),hostsFilter,notExt,notContentType,tcpFlowDir,handler,verbose);
+            PassiveSniffer capture = new PassiveSniffer(interfaceName, Utils.getTime(maxIdle),hostsFilter,httpPort,notExt,notContentType,tcpFlowDir,handler,verbose);
             new Thread(capture,"sniffer").start();
             capture.init();
         }

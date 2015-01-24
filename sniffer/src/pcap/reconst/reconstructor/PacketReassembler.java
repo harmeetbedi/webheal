@@ -10,6 +10,10 @@ import java.util.Map;
 public class PacketReassembler {
 
     protected Map<TcpConnection, TcpReassembler> reassembledPackets = new HashMap<TcpConnection, TcpReassembler>();
+    protected final int httpPort;
+    public PacketReassembler(int httpPort) {
+        this.httpPort = httpPort;
+    }
 
     public Map<TcpConnection, TcpReassembler> getReassembledPackets() {
         return reassembledPackets;
@@ -18,7 +22,7 @@ public class PacketReassembler {
     public synchronized void reassemble(TcpPacket tcpPacket) {
         try {
             // Creates a key for the dictionary
-            TcpConnection c = new TcpConnection(tcpPacket);
+            TcpConnection c = new TcpConnection(httpPort,tcpPacket);
 
             // create a new entry if the key does not exists
             if (!reassembledPackets.containsKey(c)) {
@@ -27,7 +31,7 @@ public class PacketReassembler {
             }
 
             // Use the TcpRecon class to reconstruct the session
-            reassembledPackets.get(c).reassemblePacket(tcpPacket);
+            reassembledPackets.get(c).reassemblePacket(httpPort,tcpPacket);
         } catch (Exception e) {
             e.printStackTrace();
         }

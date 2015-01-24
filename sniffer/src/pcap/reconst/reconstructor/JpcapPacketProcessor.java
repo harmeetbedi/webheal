@@ -23,10 +23,17 @@ public class JpcapPacketProcessor implements PacketReceiver {
     public void receivePacket(Packet packet) {
         packetNumber++;
         if ( packet instanceof TCPPacket) {
-            if ( verbose ) {
-                System.out.println(String.format("processing #%d %s", packetNumber, packet));
+            TCPPacket src = (TCPPacket) packet;
+            if ( src.src_ip == null ) {
+                if ( verbose ) {
+                    System.out.println(String.format("ignorning invalid #%d %s", packetNumber, src));
+                }
+                return;
             }
-            packetReassembler.reassemble(new JpcapTcpPacket((TCPPacket) packet));
+            if ( verbose ) {
+                System.out.println(String.format("processing #%d %s", packetNumber, src));
+            }
+            packetReassembler.reassemble(new JpcapTcpPacket(src));
         }
     }
 }

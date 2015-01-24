@@ -1,7 +1,6 @@
 package org.webheal.sniffer;
 
 import java.io.FileNotFoundException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,13 +14,14 @@ public class TimedPacketReassembler extends PacketReassembler
 {
     private Map<TcpConnection, Long> lastSeenMap = new HashMap<TcpConnection, Long>();
     private final long maxIdleTime;
-    public TimedPacketReassembler(long maxIdleTime) {
+    public TimedPacketReassembler(int httpPort, long maxIdleTime) {
+        super(httpPort);
         this.maxIdleTime = maxIdleTime;
     }
     @Override public synchronized void reassemble(TcpPacket tcpPacket)
     {
         super.reassemble(tcpPacket);
-        TcpConnection c = new TcpConnection(tcpPacket);
+        TcpConnection c = new TcpConnection(httpPort,tcpPacket);
         if (tcpPacket.getFin()) {
             //System.out.println("*** GOT_FIN : " + c);
             lastSeenMap.put(c, -1L);

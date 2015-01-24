@@ -15,13 +15,13 @@ public class PcapFileSniffer extends AbstractSniffer
 {
     private final File src;
 
-    public PcapFileSniffer(File src, Set<String> hostsFilter, Set<String> notExt, Set<String> notContentType, File tcpFlowDir, IHttpHandler handler,boolean verbose) throws IOException {
-        super(new HttpPacketReassembler(), hostsFilter, notExt, notContentType, tcpFlowDir, handler,verbose);
+    public PcapFileSniffer(File src, Set<String> hostsFilter, int httpPort, Set<String> notExt, Set<String> notContentType, File tcpFlowDir, IHttpHandler handler,boolean verbose) throws IOException {
+        super(new HttpPacketReassembler(httpPort), hostsFilter, notExt, notContentType, tcpFlowDir, handler,verbose);
         this.src = src;
     }
 
-    public PcapFileSniffer(File src, IHttpHandler handler,boolean verbose) throws IOException {
-        super(new HttpPacketReassembler(), handler,verbose);
+    public PcapFileSniffer(File src, int httpPort, IHttpHandler handler,boolean verbose) throws IOException {
+        super(new HttpPacketReassembler(httpPort), handler,verbose);
         this.src = src;
     }
 
@@ -34,6 +34,10 @@ public class PcapFileSniffer extends AbstractSniffer
         captor.close();
     }
     private static class HttpPacketReassembler extends PacketReassembler {
+        public HttpPacketReassembler(int httpPort) {
+            super(httpPort);
+        }
+
         @Override protected TcpReassembler newTcpReassembler() throws FileNotFoundException {
             return new TcpReassembler() {
                 @Override protected Boolean isRequest(TcpData tcpData) {

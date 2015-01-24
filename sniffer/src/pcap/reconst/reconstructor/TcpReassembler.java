@@ -50,14 +50,14 @@ public class TcpReassembler {
     /*
      * The main function of the class receives a tcp packet and reconstructs the stream
      */
-    public void reassemblePacket(TcpPacket tcpPacket) throws Exception {
+    public void reassemblePacket(int httpPort,TcpPacket tcpPacket) throws Exception {
         if ( TRACE ) System.out.println(String.format("captured_len = %d, len = %d, headerlen = %d, datalen = %d", tcpPacket.getCaptureLength(), tcpPacket.getLength(), tcpPacket.getHeaderLength(), tcpPacket.getDataLength()));
         long length = (long) (tcpPacket.getDataLength());
         //if (length == 0) {
         //    return;
         //}
 
-        reassembleTcp(tcpPacket.getSequence(), tcpPacket.getAckNum(), length, tcpPacket.getData(), tcpPacket.getDataLength(), tcpPacket.getSyn(), new TcpConnection(tcpPacket));
+        reassembleTcp(tcpPacket.getSequence(), tcpPacket.getAckNum(), length, tcpPacket.getData(), tcpPacket.getDataLength(), tcpPacket.getSyn(), new TcpConnection(httpPort,tcpPacket));
     }
 
 

@@ -67,7 +67,7 @@ public abstract class AbstractSniffer
         if ( verbose ) {
             System.out.println("Connections to process = " + map.size());
         }
-        Map<TcpConnection, List<HttpRequestResponse>> httpPackets = HttpFlow.packetize(map,hostsFilter,notExt,notContentType);
+        Map<TcpConnection, List<HttpRequestResponse>> httpPackets = HttpFlow.packetize(map,hostsFilter,notExt,notContentType,verbose);
         System.out.println("httpstreams to process = " + httpPackets.size());
         String dt = TIME_FMT.format(new Date());
         for ( Map.Entry<TcpConnection, List<HttpRequestResponse>> entry : httpPackets.entrySet() ) {
