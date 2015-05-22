@@ -72,13 +72,14 @@ public abstract class AbstractSniffer
         String dt = TIME_FMT.format(new Date());
         for ( Map.Entry<TcpConnection, List<HttpRequestResponse>> entry : httpPackets.entrySet() ) {
             String conn = entry.getKey().toString();
-            //System.out.println("Processing " + conn);
+            if ( verbose ) System.out.println("Processing " + conn);
             int idx = 0;
             for ( HttpRequestResponse http : entry.getValue() ) {
                 idx++;
                 String seq = SEQ_FMT.format(idx);
                 http.getRequest().decode();
                 http.getResponse().decode();
+                if ( verbose ) System.out.println("Processing " + http.getHost()+", "+http.getRequestUri()+", inplen:"+http.getRequest().getDataSize()+", outlen:"+http.getResponse().getDataSize());
                 //System.out.println("Processing " + http.getHost()+", "+http.getRequestUri()+", inp:"+http.getRequest()+", out:"+http.getResponse());
                 if ( tcpFlowDir != null ) {
                     http.writeToFile(tcpFlowDir,conn+"."+dt,seq);
@@ -90,5 +91,22 @@ public abstract class AbstractSniffer
                 }
             }
         }
+    }
+
+    protected String getDstPortFilter() {
+        StringBuffer buf = new StringBuffer();
+        boolean first = true;
+        for ( int port : pr.getHttpPort() ) {
+            if ( first ) {
+                first = false;
+            } else {
+                buf.append(" or ");
+            }
+            buf.append(port+"");
+        }
+        return buf.toString();
+    }
+    protected String getTcpFilter() {
+        return "tcp and ( port "+getDstPortFilter()+" )";
     }
 }

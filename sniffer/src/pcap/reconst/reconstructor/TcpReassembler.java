@@ -14,7 +14,7 @@ import pcap.reconst.beans.TcpFragment;
 import pcap.reconst.beans.TcpPacket;
 
 public class TcpReassembler {
-    private static final boolean TRACE = false;
+    private static final boolean TRACE = true;
     TcpData request;
     TcpData response;
     OutputStream outputStream = null;
@@ -35,9 +35,9 @@ public class TcpReassembler {
         return outputStream;
     }
 
-    public Payload getPayload() {
-        return payload;
-    }
+//    public Payload getPayload() {
+//        return payload;
+//    }
 
     public List<RequestResponse> getRequestResponse() {
         return payload.getRequestResponse();
@@ -50,14 +50,14 @@ public class TcpReassembler {
     /*
      * The main function of the class receives a tcp packet and reconstructs the stream
      */
-    public void reassemblePacket(int httpPort,TcpPacket tcpPacket) throws Exception {
+    public void reassemblePacket(TcpPacket tcpPacket) throws Exception {
         if ( TRACE ) System.out.println(String.format("captured_len = %d, len = %d, headerlen = %d, datalen = %d", tcpPacket.getCaptureLength(), tcpPacket.getLength(), tcpPacket.getHeaderLength(), tcpPacket.getDataLength()));
         long length = (long) (tcpPacket.getDataLength());
         //if (length == 0) {
         //    return;
         //}
 
-        reassembleTcp(tcpPacket.getSequence(), tcpPacket.getAckNum(), length, tcpPacket.getData(), tcpPacket.getDataLength(), tcpPacket.getSyn(), new TcpConnection(httpPort,tcpPacket));
+        reassembleTcp(tcpPacket.getSequence(), tcpPacket.getAckNum(), length, tcpPacket.getData(), tcpPacket.getDataLength(), tcpPacket.getSyn(), new TcpConnection(tcpPacket));
     }
 
 
@@ -232,6 +232,7 @@ public class TcpReassembler {
         // ignore empty packets
         if (data.length == 0) return;
         Boolean req = isRequest(tcpData);
+        //System.out.println((req ? " > ":" < ")+tcpData.getAddress().getHostAddress()+":"+tcpData.getPort()+", "+data.length);
         if ( req == null ) {
             outputStream.write(data, 0, data.length);
         } else {
@@ -244,7 +245,7 @@ public class TcpReassembler {
         return null;
     }
 
-    public static class Payload {
+    private static class Payload {
         LinkedList<RequestOrResponse> list = new LinkedList<RequestOrResponse>();
         void add(boolean request,byte[] data) {
             if ( list.size() == 0 ) {

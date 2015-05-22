@@ -61,23 +61,23 @@ public class HttpFlow {
                 if ( requestUri == null || requestIdx < 0  || responseIdx != 0 ) {
 //                    String reqStr = new String(requestData);
 //                    String respStr = new String(responseData);
-                    skipLog(String.format("Skipped http packet : %s, request=%d, response=%d, uriIdx=%d, reqIdx=%d, respIdx=%d", connection, requestData.length, responseData.length, uriIndex, requestIdx, responseIdx));
+                    skipLog(verbose, String.format("Skipped http packet : %s, request=%d, response=%d, uriIdx=%d, reqIdx=%d, respIdx=%d", connection, requestData.length, responseData.length, uriIndex, requestIdx, responseIdx));
                     continue;
                 }
                 if( isIgnoreExt(requestUri,ignoreUriExt) ) {
-                    skipLog(String.format("Skipped Request Uri : %s, req=%d, resp=%d, uri=%s", connection, requestData.length, responseData.length, requestUri));
+                    skipLog(verbose, String.format("Skipped Request Uri : %s, req=%d, resp=%d, uri=%s", connection, requestData.length, responseData.length, requestUri));
                     continue;
                 }
                 InputData req = getData(requestData,true);
                 String host = req.getHeaders().getHost();
                 if( !isHostAllowed(host,hostsFilter) ) {
-                    skipLog(String.format("Skipped Host : %s, req=%d, resp=%d, uri=%s, host=%s", connection, requestData.length, responseData.length, requestUri, host));
+                    skipLog(verbose, String.format("Skipped Host : %s, req=%d, resp=%d, uri=%s, host=%s", connection, requestData.length, responseData.length, requestUri, host));
                     continue;
                 }
                 InputData resp = getData(responseData,true);
                 String contentType = resp.getHeaders().getContentType();
                 if( isIgnoreContentType(contentType,ignoreContentType) ) {
-                    skipLog(String.format("Skipped Response ContentType : %s, req=%d, resp=%d, uri=%s, type=%s", connection, requestData.length, responseData.length, requestUri,contentType));
+                    skipLog(verbose, String.format("Skipped Response ContentType : %s, req=%d, resp=%d, uri=%s, type=%s", connection, requestData.length, responseData.length, requestUri,contentType));
                     continue;
                 }
                 HttpRequestResponse http = new HttpRequestResponse(connection,requestUri,requestUriBytes, null, req, resp);
@@ -86,8 +86,8 @@ public class HttpFlow {
         }
         return result;
     }
-    private static void skipLog(String msg) {
-        System.out.println("SKIP: "+msg);
+    private static void skipLog(boolean verbose, String msg) {
+        if ( verbose ) System.out.println("SKIP: "+msg);
         SKIP_LOG.info(msg);
     }
     

@@ -61,4 +61,8 @@ public class JpcapTcpPacket implements TcpPacket {
     public boolean getFin() {
         return tcpPacket.fin;
     }
+    
+    public String toString() {
+        return tcpPacket.toString();
+    }
 }

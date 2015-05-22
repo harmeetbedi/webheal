@@ -10,12 +10,10 @@ import jpcap.NetworkInterface;
 public class PassiveSniffer extends AbstractSniffer implements Runnable
 {
     private final String interfaceName;
-    private int httpPort;
 
-    public PassiveSniffer(String interfaceName, long maxIdleTime, Set<String> hostsFilter, int httpPort, Set<String> notExt, Set<String> notContentType, File tcpFlowDir, IHttpHandler handler, boolean verbose) throws IOException {
+    public PassiveSniffer(String interfaceName, long maxIdleTime, Set<String> hostsFilter, Set<Integer> httpPort, Set<String> notExt, Set<String> notContentType, File tcpFlowDir, IHttpHandler handler, boolean verbose) throws IOException {
         super(new TimedPacketReassembler(httpPort,maxIdleTime), hostsFilter, notExt, notContentType, tcpFlowDir, handler,verbose);
         this.interfaceName = interfaceName;
-        this.httpPort = httpPort;
     }
     public void init() throws IOException { 
         NetworkInterface[] nis = JpcapCaptor.getDeviceList();
@@ -26,9 +24,10 @@ public class PassiveSniffer extends AbstractSniffer implements Runnable
                 selected = ni;
             }
         }
-        System.out.println("Selected interface : "+selected.name);
+        String filter = getTcpFilter();
+        System.out.println("Selected interface : "+selected.name+", filter: "+filter);
         JpcapCaptor captor = JpcapCaptor.openDevice(selected, 65535, true, 0);
-        captor.setFilter("tcp port "+httpPort, true);
+        captor.setFilter(filter, true);
         try {
             captor.loopPacket(-1, jpcapProcessor);
         } finally {

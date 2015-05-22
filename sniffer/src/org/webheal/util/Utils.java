@@ -10,7 +10,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -183,12 +185,18 @@ public class Utils
         }
     }
 
-    public static Properties readProperties(String file) throws Exception
+    public static Map<String,String> readMap(String file) throws Exception
     {
-        Properties prop = new Properties();
+        Map<String,String> prop = new LinkedHashMap<String,String>();
         FileInputStream fin = new FileInputStream(file);
         try {
-            prop.load(fin);
+            List<String> lines = IOUtils.readLines(fin);
+            for ( String line : lines ) {
+                String[] parts = line.trim().split("=");
+                if ( parts.length == 2 && !parts[0].startsWith("#")) {
+                    prop.put(parts[0].trim(),parts[1].trim());
+                }
+            }
         } catch (Exception ex) {
             IOUtils.closeQuietly(fin);
         }

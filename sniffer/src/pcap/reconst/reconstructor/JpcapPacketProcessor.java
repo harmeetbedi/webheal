@@ -21,6 +21,7 @@ public class JpcapPacketProcessor implements PacketReceiver {
 
     //this method is called every time Jpcap captures a packet
     public void receivePacket(Packet packet) {
+        //System.out.println("packet > "+packetNumber +" > "+packet);
         packetNumber++;
         if ( packet instanceof TCPPacket) {
             TCPPacket src = (TCPPacket) packet;

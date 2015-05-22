@@ -10,8 +10,10 @@ import pcap.reconst.reconstructor.Reconstructor;
 import pcap.reconst.reconstructor.TcpReassembler;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class FileDataReconstructor {
     public Map<TcpConnection, TcpReassembler> reconstruct(File inputFile, Reconstructor reconstructor) throws Exception {
@@ -22,7 +24,9 @@ public class FileDataReconstructor {
         try {
             String filename = "dump.pcap";
             FileDataReconstructor fileDataReconstructor = new FileDataReconstructor();
-            Map<TcpConnection, TcpReassembler> map = fileDataReconstructor.reconstruct(new File(filename), new JpcapReconstructor(new PacketReassembler(80),true));
+            Set<Integer> set = new HashSet<Integer>();
+            set.add(80);
+            Map<TcpConnection, TcpReassembler> map = fileDataReconstructor.reconstruct(new File(filename), new JpcapReconstructor(new PacketReassembler(set),true));
             Http http = new Http(map);
             Map<TcpConnection, List<HttpRequestResponse>> httpPackets = http.packetize();
             System.out.println("number of packets " + httpPackets.size());

@@ -3,6 +3,7 @@ package org.webheal.sniffer;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import pcap.reconst.beans.TcpConnection;
 import pcap.reconst.beans.TcpData;
@@ -14,14 +15,14 @@ public class TimedPacketReassembler extends PacketReassembler
 {
     private Map<TcpConnection, Long> lastSeenMap = new HashMap<TcpConnection, Long>();
     private final long maxIdleTime;
-    public TimedPacketReassembler(int httpPort, long maxIdleTime) {
+    public TimedPacketReassembler(Set<Integer> httpPort, long maxIdleTime) {
         super(httpPort);
         this.maxIdleTime = maxIdleTime;
     }
     @Override public synchronized void reassemble(TcpPacket tcpPacket)
     {
         super.reassemble(tcpPacket);
-        TcpConnection c = new TcpConnection(httpPort,tcpPacket);
+        TcpConnection c = new TcpConnection(tcpPacket);
         if (tcpPacket.getFin()) {
             //System.out.println("*** GOT_FIN : " + c);
             lastSeenMap.put(c, -1L);
@@ -66,7 +67,8 @@ public class TimedPacketReassembler extends PacketReassembler
     @Override protected TcpReassembler newTcpReassembler() throws FileNotFoundException {
         return new TcpReassembler() {
             @Override protected Boolean isRequest(TcpData tcpData) {
-                return ( tcpData.getPort() > 1024 );
+                return !httpPort.contains(tcpData.getPort());
+                //return ( tcpData.getPort() > 1024 );
             }
         };
     }

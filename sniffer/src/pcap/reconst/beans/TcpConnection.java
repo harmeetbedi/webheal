@@ -1,8 +1,5 @@
 package pcap.reconst.beans;
 
-import pcap.reconst.beans.TcpPacket;
-import pcap.reconst.beans.TestTcpPacket;
-
 import java.net.InetAddress;
 
 public class TcpConnection implements Comparable {
@@ -10,23 +7,23 @@ public class TcpConnection implements Comparable {
     private int srcPort;
     private InetAddress dstIp;
     private int dstPort;
-    private final int httpPort;
+    //private final int httpPort;
 
-    public TcpConnection(int httpPort, InetAddress sourceIP, short sourcePort, InetAddress destinationIP, short destinationPort) {
+    public TcpConnection(InetAddress sourceIP, short sourcePort, InetAddress destinationIP, short destinationPort) {
         srcIp = sourceIP;
         dstIp = destinationIP;
         srcPort = sourcePort;
         dstPort = destinationPort;
-        this.httpPort = httpPort;
+        //this.httpPort = httpPort;
         //flip();
     }
 
-    public TcpConnection(int httpPort, TcpPacket packet) {
+    public TcpConnection(TcpPacket packet) {
         srcIp = packet.getSourceIP();
         dstIp = packet.getDestinationIP();
         srcPort = packet.getSourcePort();
         dstPort = packet.getDestinationPort();
-        this.httpPort = httpPort;
+        //this.httpPort = httpPort;
         //flip();
     }
     private void flip() {
@@ -95,12 +92,13 @@ public class TcpConnection implements Comparable {
             return 0;
         }
 
-        if (getSrcPort() != 80 && other.getSrcPort() != httpPort) {
-            return getSrcPort() - other.getSrcPort();
-        } else if (getDstPort() != httpPort && other.getDstPort() != httpPort) {
-            return getDstPort() - other.getDstPort();
-        } else {
-            return getDstPort() * 2 + getSrcPort() - other.getSrcPort() * 2 + other.getDstPort();
-        }
+        return getDstPort() * 2 + getSrcPort() - other.getSrcPort() * 2 + other.getDstPort();
+//        if (getSrcPort() != httpPort && other.getSrcPort() != httpPort) {
+//            return getSrcPort() - other.getSrcPort();
+//        } else if (getDstPort() != httpPort && other.getDstPort() != httpPort) {
+//            return getDstPort() - other.getDstPort();
+//        } else {
+//            return getDstPort() * 2 + getSrcPort() - other.getSrcPort() * 2 + other.getDstPort();
+//        }
     }
 }

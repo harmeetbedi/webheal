@@ -1,13 +1,16 @@
 package pcap.reconst;
 
 import org.apache.log4j.Logger;
+
 import pcap.reconst.reconstructor.JpcapReconstructor;
 import pcap.reconst.reconstructor.PacketReassembler;
 import pcap.reconst.reconstructor.Reconstructor;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ReconstructDirectory {
     private static Logger logger = Logger.getLogger(ReconstructDirectory.class);
@@ -51,7 +54,9 @@ public class ReconstructDirectory {
 
     public static void main(String[] args) {
         try {
-            ReconstructDirectory reconstructDirectory = new ReconstructDirectory(args[0], new JpcapReconstructor(new PacketReassembler(80),true));
+            Set<Integer> set = new HashSet<Integer>();
+            set.add(80);
+            ReconstructDirectory reconstructDirectory = new ReconstructDirectory(args[0], new JpcapReconstructor(new PacketReassembler(set),true));
             reconstructDirectory.reconstruct();
         } catch (Exception e) {
             e.printStackTrace();

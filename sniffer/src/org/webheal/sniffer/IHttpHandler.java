@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.webheal.modsec.ModSecRuleParser;
@@ -38,7 +37,7 @@ public interface IHttpHandler
             };
             return result;
         }
-        public static IHttpHandler autoReloadModSecurity(final Map<String,File> hostToConfMap, final File ruleHitDir) throws Exception
+        public static IHttpHandler autoReloadModSecurity(final List<HostPortConf> confList, final File ruleHitDir) throws Exception
         {
             IExecutor<File, IHttpHandler> factory = new IExecutor<File, IHttpHandler>() {
                 @Override public IHttpHandler execute(File param) throws Exception
@@ -47,7 +46,7 @@ public interface IHttpHandler
                 } 
                 
             };
-            return new AutoReloadHttpHandler(hostToConfMap,factory);
+            return new AutoReloadHttpHandler(confList,factory);
         }
         public static IHttpHandler modSecurity(final File conf, File ruleHitDir) throws Exception
         {
