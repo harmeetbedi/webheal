@@ -18,7 +18,7 @@ public class JpcapReconstructor implements Reconstructor {
         System.out.println("reconstructing " + filename + " ...");
         JpcapCaptor captor = JpcapCaptor.openFile(filename);
         captor.setFilter("tcp", true);
-        JpcapPacketProcessor jpcapPacketProcessor = new JpcapPacketProcessor(packetReassembler,verbose);
+        JpcapPacketProcessor jpcapPacketProcessor = new JpcapPacketProcessor(packetReassembler,false,verbose);
         captor.processPacket(-1, jpcapPacketProcessor);
         captor.close();
         return packetReassembler.getCompletedStreams();

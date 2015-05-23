@@ -131,7 +131,7 @@ public class Cli
         List<HostPortConf> confList = new ArrayList<HostPortConf>();
         HashSet<String> hostsFilter = new HashSet<String>();
         if ( cmd.hasOption('C') ) {
-            Map<String,String> prop = Utils.readMap(cmd.getOptionValue("C"));
+            Map<String,String> prop = Utils.readConfig(cmd.getOptionValue("C"));
             for ( Map.Entry<String,String> entry : prop.entrySet() ) {
                 String hostPort = entry.getKey();
                 String confFile = entry.getValue();

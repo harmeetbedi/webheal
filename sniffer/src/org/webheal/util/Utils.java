@@ -185,7 +185,7 @@ public class Utils
         }
     }
 
-    public static Map<String,String> readMap(String file) throws Exception
+    public static Map<String,String> readConfig(String file) throws Exception
     {
         Map<String,String> prop = new LinkedHashMap<String,String>();
         FileInputStream fin = new FileInputStream(file);
@@ -194,7 +194,7 @@ public class Utils
             for ( String line : lines ) {
                 String[] parts = line.trim().split("=");
                 if ( parts.length == 2 && !parts[0].startsWith("#")) {
-                    prop.put(parts[0].trim(),parts[1].trim());
+                    prop.put(parts[0].trim().toLowerCase(),parts[1].trim());
                 }
             }
         } catch (Exception ex) {
@@ -205,8 +205,10 @@ public class Utils
     public static Set<String> toSet(String str, String splitRegex)
     {
         Set<String> set = new HashSet<String>();
-        for (String part : str.split(splitRegex)) {
-            set.add(part);
+        if ( StringUtils.isNotEmpty(str)) {
+            for (String part : str.split(splitRegex)) {
+                set.add(part);
+            }
         }
         return set;
     }

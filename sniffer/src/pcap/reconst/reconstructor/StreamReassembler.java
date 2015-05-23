@@ -3,9 +3,11 @@ package pcap.reconst.reconstructor;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import pcap.reconst.beans.JpcapTcpPacket;
 import pcap.reconst.beans.TcpConnection;
 import pcap.reconst.beans.TcpPacket;
 
@@ -52,6 +54,9 @@ public class StreamReassembler {
     }
 
     public synchronized void receivePacket(TcpPacket tcpPacket) {
+        processPacket(tcpPacket);
+    }
+    private void processPacket(TcpPacket tcpPacket) {
         //System.out.println(tcpPacket);
         boolean request = httpPort.contains(tcpPacket.getDestinationPort());
         boolean response = httpPort.contains(tcpPacket.getSourcePort());
@@ -86,6 +91,13 @@ public class StreamReassembler {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public synchronized void receivePackets(List<TcpPacket> bufferedPackets)
+    {
+        for ( TcpPacket tcpPacket : bufferedPackets ) {
+            processPacket(tcpPacket);  
         }
     }
 }

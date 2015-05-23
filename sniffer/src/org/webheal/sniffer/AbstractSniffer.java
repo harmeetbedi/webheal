@@ -32,13 +32,13 @@ public abstract class AbstractSniffer
     private static DateFormat TIME_FMT = new SimpleDateFormat("yyMMddHHss");
     private static NumberFormat SEQ_FMT = new DecimalFormat("000");
 
-    public AbstractSniffer(StreamReassembler pr, Set<String> hostsFilter, Set<String> notExt, Set<String> notContentType, File tcpFlowDir, IHttpHandler handler, long timeout, boolean verbose) throws IOException {
+    public AbstractSniffer(StreamReassembler pr, boolean bufferPackets, Set<String> hostsFilter, Set<String> notExt, Set<String> notContentType, File tcpFlowDir, IHttpHandler handler, long timeout, boolean verbose) throws IOException {
         this.notExt = notExt;
         this.notContentType = notContentType;
         this.hostsFilter = hostsFilter;
         this.tcpFlowDir = tcpFlowDir;
         this.pr = pr;
-        jpcapProcessor = new JpcapPacketProcessor(pr,verbose);
+        jpcapProcessor = new JpcapPacketProcessor(pr,bufferPackets,verbose);
         this.handler = handler;
         this.verbose = verbose;
         this.streamTimeout = timeout;
