@@ -15,8 +15,8 @@ public class Main
     public static void main(String[] args) throws Exception
     {
         if ( args.length == 0 ) {
-            args = "-f /Users/harmeet/tmp/test.pcap -c webheal.properties".split(" ");
-            args = "-i en0 -c webheal.properties".split(" ");
+//            args = "-f /Users/harmeet/tmp/test.pcap -c webheal.properties".split(" ");
+//            args = "-i en0 -c webheal.properties".split(" ");
         }
         // configuration file
         File logConfig = new File("./log4j.xml");
@@ -28,11 +28,9 @@ public class Main
         options.addOption("c", true, "configuration file");
         CommandLine cmd = new PosixParser().parse( options, args,null,true);
 
-        if ( cmd.hasOption('f') ) {
-            if ( !cmd.hasOption('c') || !(cmd.hasOption('i') || cmd.hasOption('f') ) ) {
-                showHelp(options,options);
-                return;
-            }
+        if ( !cmd.hasOption('c') || !(cmd.hasOption('i') || cmd.hasOption('f') ) ) {
+            showHelp(options,options);
+            return;
         }
 
         System.out.println("libpath="+System.getProperty("java.library.path"));
@@ -58,13 +56,8 @@ public class Main
     }
     
     private static void showHelp(Options options, Options payloadTestOptions) {
-        System.out.println("TO RUN PASSIVE SNIFFER:");
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp( "java org.webheal.sniffer.Cli", options );
-        System.out.println("");
-        System.out.println("TO RUN TEST PAYLOAD:");
-        formatter = new HelpFormatter();
-        formatter.printHelp( "java org.webheal.sniffer.Cli", payloadTestOptions );
+        formatter.printHelp( "java org.webheal.sniffer.Main", options );
     }
     private static CommandLine getCmdLine(Options options, Options payloadTestOptions, String[] args) throws Exception {
         CommandLine cmd = new PosixParser().parse( options, args,null,true);
