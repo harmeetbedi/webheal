@@ -22,6 +22,9 @@ public class HostPortConf
         this.conf = conf;
         this.verbose = verbose;
     }
+    public String toString() {
+        return String.format("%s:%d - %s", host, port, conf.getAbsoluteFile());
+    }
     // reload if there is config change 
     private void loadHandler(IExecutor<File, IHttpHandler> factory) throws Exception
     {

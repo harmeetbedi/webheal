@@ -20,13 +20,11 @@ import pcap.reconst.beans.Headers;
 import pcap.reconst.beans.InputData;
 import pcap.reconst.beans.TcpConnection;
 import pcap.reconst.compression.Gunzip;
-import pcap.reconst.decoder.Decoder;
-import pcap.reconst.decoder.DecoderFactory;
-import pcap.reconst.reconstructor.TcpReassembler;
-import pcap.reconst.reconstructor.TcpReassembler.RequestResponse;
+import pcap.reconst.reconstructor.TcpStream;
+import pcap.reconst.reconstructor.TcpStream.Payload;
 
 public class HttpFlow {
-    private static Logger log = Logger.getLogger(Http.class);
+    private static Logger log = Logger.getLogger(HttpFlow.class);
     private static Logger SKIP_LOG = Logger.getLogger("skip");
 
     public static final String REQUEST_IDENTIFIER = " HTTP/1.";
@@ -38,51 +36,49 @@ public class HttpFlow {
 
     public final static int ZERO = 0;
 
-    public static Map<TcpConnection, List<HttpRequestResponse>> packetize(Map<TcpConnection, TcpReassembler> map, Set<String> hostsFilter, Set<String> ignoreUriExt, Set<String> ignoreContentType,boolean verbose) {
+    public static Map<TcpConnection, List<HttpRequestResponse>> packetize(Map<TcpConnection, TcpStream> map, Set<String> hostsFilter, Set<String> ignoreUriExt, Set<String> ignoreContentType,boolean verbose) {
         Map<TcpConnection, List<HttpRequestResponse>> result = new HashMap<TcpConnection, List<HttpRequestResponse>>();
         for (TcpConnection connection : map.keySet()) {
             if ( verbose ) { System.out.println("HttpFlow conn: "+connection); }
-            TcpReassembler reassembler = map.get(connection);
-            List<RequestResponse> rrList = reassembler.getRequestResponse();
-            if ( verbose ) { System.out.println("HttpFlow conn: "+connection+", rrList="+rrList.size()); }
-            for ( RequestResponse rr : rrList ) {
-                byte[] requestData = rr.request.toBytes();
-                byte[] responseData = rr.response.toBytes();
-                int requestIdx = Utils.getIndex(requestData, 0, 4*1024, REQUEST_IDENTIFIER_BYTES, true);
-                int responseIdx = Utils.getIndex(responseData, 0, RESPONSE_IDENTIFIER_BYTES.length, RESPONSE_IDENTIFIER_BYTES, true);
-                String requestUri = null;
-                final int uriIndex = (requestIdx > 0) ? Utils.getIndex(requestData,0,requestIdx, SEPARATOR_BYTES, false) : -1;
-                byte[] requestUriBytes = null;
-                if ( uriIndex >= 0 ) {
-                    requestUriBytes = Utils.slice(requestData,uriIndex+1,requestIdx-(uriIndex+1));
-                    requestUri = new String(requestUriBytes);
-                }
-                if ( verbose ) { System.out.println(String.format("http packet : %s, request=%d, response=%d, uriIdx=%d, reqIdx=%d, respIdx=%d", connection, requestData.length, responseData.length, uriIndex, requestIdx, responseIdx)); }
-                if ( requestUri == null || requestIdx < 0  || responseIdx != 0 ) {
+            TcpStream reassembler = map.get(connection);
+            Payload rr = reassembler.getRequestResponse();
+            if ( verbose ) { System.out.println("HttpFlow conn: "+connection+", payload: "+rr); }
+            byte[] requestData = rr.request.toBytes();
+            byte[] responseData = rr.response.toBytes();
+            int requestIdx = Utils.getIndex(requestData, 0, 4*1024, REQUEST_IDENTIFIER_BYTES, true);
+            int responseIdx = Utils.getIndex(responseData, 0, RESPONSE_IDENTIFIER_BYTES.length, RESPONSE_IDENTIFIER_BYTES, true);
+            String requestUri = null;
+            final int uriIndex = (requestIdx > 0) ? Utils.getIndex(requestData,0,requestIdx, SEPARATOR_BYTES, false) : -1;
+            byte[] requestUriBytes = null;
+            if ( uriIndex >= 0 ) {
+                requestUriBytes = Utils.slice(requestData,uriIndex+1,requestIdx-(uriIndex+1));
+                requestUri = new String(requestUriBytes);
+            }
+            if ( verbose ) { System.out.println(String.format("http packet : %s, request=%d, response=%d, uriIdx=%d, reqIdx=%d, respIdx=%d", connection, requestData.length, responseData.length, uriIndex, requestIdx, responseIdx)); }
+            if ( requestUri == null || requestIdx < 0  || responseIdx != 0 ) {
 //                    String reqStr = new String(requestData);
 //                    String respStr = new String(responseData);
-                    skipLog(verbose, String.format("Skipped http packet : %s, request=%d, response=%d, uriIdx=%d, reqIdx=%d, respIdx=%d", connection, requestData.length, responseData.length, uriIndex, requestIdx, responseIdx));
-                    continue;
-                }
-                if( isIgnoreExt(requestUri,ignoreUriExt) ) {
-                    skipLog(verbose, String.format("Skipped Request Uri : %s, req=%d, resp=%d, uri=%s", connection, requestData.length, responseData.length, requestUri));
-                    continue;
-                }
-                InputData req = getData(requestData,true);
-                String host = req.getHeaders().getHost();
-                if( !isHostAllowed(host,hostsFilter) ) {
-                    skipLog(verbose, String.format("Skipped Host : %s, req=%d, resp=%d, uri=%s, host=%s", connection, requestData.length, responseData.length, requestUri, host));
-                    continue;
-                }
-                InputData resp = getData(responseData,true);
-                String contentType = resp.getHeaders().getContentType();
-                if( isIgnoreContentType(contentType,ignoreContentType) ) {
-                    skipLog(verbose, String.format("Skipped Response ContentType : %s, req=%d, resp=%d, uri=%s, type=%s", connection, requestData.length, responseData.length, requestUri,contentType));
-                    continue;
-                }
-                HttpRequestResponse http = new HttpRequestResponse(connection,requestUri,requestUriBytes, null, req, resp);
-                Utils.add(result,connection, http);
+                skipLog(verbose, String.format("Skipped http packet : %s, request=%d, response=%d, uriIdx=%d, reqIdx=%d, respIdx=%d", connection, requestData.length, responseData.length, uriIndex, requestIdx, responseIdx));
+                continue;
             }
+            if( isIgnoreExt(requestUri,ignoreUriExt) ) {
+                skipLog(verbose, String.format("Skipped Request Uri : %s, req=%d, resp=%d, uri=%s", connection, requestData.length, responseData.length, requestUri));
+                continue;
+            }
+            InputData req = getData(requestData,true);
+            String host = req.getHeaders().getHost();
+            if( !isHostAllowed(host,hostsFilter) ) {
+                skipLog(verbose, String.format("Skipped Host : %s, req=%d, resp=%d, uri=%s, host=%s", connection, requestData.length, responseData.length, requestUri, host));
+                continue;
+            }
+            InputData resp = getData(responseData,true);
+            String contentType = resp.getHeaders().getContentType();
+            if( isIgnoreContentType(contentType,ignoreContentType) ) {
+                skipLog(verbose, String.format("Skipped Response ContentType : %s, req=%d, resp=%d, uri=%s, type=%s", connection, requestData.length, responseData.length, requestUri,contentType));
+                continue;
+            }
+            HttpRequestResponse http = new HttpRequestResponse(connection,requestUri,requestUriBytes, null, req, resp);
+            Utils.add(result,connection, http);
         }
         return result;
     }

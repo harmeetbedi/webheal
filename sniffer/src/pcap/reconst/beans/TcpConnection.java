@@ -7,16 +7,6 @@ public class TcpConnection implements Comparable {
     private int srcPort;
     private InetAddress dstIp;
     private int dstPort;
-    //private final int httpPort;
-
-    public TcpConnection(InetAddress sourceIP, short sourcePort, InetAddress destinationIP, short destinationPort) {
-        srcIp = sourceIP;
-        dstIp = destinationIP;
-        srcPort = sourcePort;
-        dstPort = destinationPort;
-        //this.httpPort = httpPort;
-        //flip();
-    }
 
     public TcpConnection(TcpPacket packet) {
         srcIp = packet.getSourceIP();
@@ -26,10 +16,10 @@ public class TcpConnection implements Comparable {
         //this.httpPort = httpPort;
         //flip();
     }
-    private void flip() {
-        if ( srcPort < dstPort ) {
-            return;
-        }
+    public void flip() {
+//        if ( srcPort < dstPort ) {
+//            return;
+//        }
         InetAddress tmpIp = srcIp;
         int tmpPort = srcPort;
         srcIp = dstIp;

@@ -3,7 +3,7 @@ package pcap.reconst;
 import org.apache.log4j.Logger;
 
 import pcap.reconst.reconstructor.JpcapReconstructor;
-import pcap.reconst.reconstructor.PacketReassembler;
+import pcap.reconst.reconstructor.StreamReassembler;
 import pcap.reconst.reconstructor.Reconstructor;
 
 import java.io.File;
@@ -56,7 +56,7 @@ public class ReconstructDirectory {
         try {
             Set<Integer> set = new HashSet<Integer>();
             set.add(80);
-            ReconstructDirectory reconstructDirectory = new ReconstructDirectory(args[0], new JpcapReconstructor(new PacketReassembler(set),true));
+            ReconstructDirectory reconstructDirectory = new ReconstructDirectory(args[0], new JpcapReconstructor(new StreamReassembler(set,false),true));
             reconstructDirectory.reconstruct();
         } catch (Exception e) {
             e.printStackTrace();

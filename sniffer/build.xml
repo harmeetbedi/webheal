@@ -36,7 +36,7 @@
                 <include name="**/*.xml" />
             </fileset>
         </copy>
-        <jar destfile="webheal.jar"  basedir="${build}"/>
+        <jar destfile="lib/webheal.jar"  basedir="${build}"/>
     </target>
 
     <target name="bundle" depends="dist">

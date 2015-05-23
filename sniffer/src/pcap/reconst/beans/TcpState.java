@@ -2,13 +2,13 @@ package pcap.reconst.beans;
 
 import java.net.InetAddress;
 
-public class TcpData {
+public class TcpState {
     private InetAddress address;
     private long port;
     private long seq;
     private TcpFragment fragment;
 
-    public TcpData(InetAddress address, long port) {
+    public TcpState(InetAddress address, long port) {
         this.address = address;
         this.port = port;
     }

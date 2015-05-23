@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.io.IOUtils;
@@ -57,10 +58,16 @@ public class Cli
     public static void main(String[] args) throws Exception
     {
         if ( args.length == 0 ) {
-            //args = "-i en1 -m test.conf -t 30 -dh ./output/hits -ne gif,css,jpg,jpeg,png,xls,pdf,xlsx,doc,csv,txt,js,mov,ico -nt image,xml".split(" ");
+            args = "-i en1 -m test.conf -v -t 30 -dh ./output/hits -ne gif,css,jpg,jpeg,png,xls,pdf,xlsx,doc,csv,txt,js,mov,ico -nt image,xml".split(" ");
+            args = "-f /Users/harmeet/tmp/test.pcap -t 30s -dh ./output/hits -dt /Users/harmeet/tmp/pcap/trace -ne gif,css,jpg,jpeg,png,xls,pdf,xlsx,doc,csv,txt,js,mov,ico -nt image,xml -m test.conf".split(" ");
+            args = "-f /Users/harmeet/tmp/test.pcap -m test.conf -dt /Users/harmeet/tmp/pcap/trace -ne gif,jpg,jpeg,png,xls,pdf,xlsx,doc,csv,mov,ic -nt image,xml -dh ./output/hits".split(" ");
             //args = "-f dump.pcap -m test.conf -t 3 -dh ./output/hits -ne gif,css,jpg,jpeg,png,xls,pdf,xlsx,doc,csv,txt,js,mov,ico -nt image,xml".split(" ");
             //args = "-f /Users/harmeet/tmp/out.pcap -m test.conf -ne gif,css,jpg,jpeg,png,xls,pdf,xlsx,doc,csv,txt,js,mov,ico -nt image,xml -v -p 8080".split(" ");
-            args = "-f /Users/harmeet/tmp/out.pcap -C /Users/harmeet/tmp/pcap.props -ne gif,jpg,jpeg,png,xls,pdf,xlsx,doc,csv,mov,ico -nt image,xml".split(" ");
+            //args = "-f /Users/harmeet/tmp/test.pcap -C /Users/harmeet/tmp/pcap.props -ne gif,jpg,jpeg,png,xls,pdf,xlsx,doc,csv,mov,ico -nt image,xml".split(" ");
+//            args = "-i en1 -C /Users/harmeet/tmp/pcap.props -ne gif,jpg,jpeg,png,xls,pdf,xlsx,doc,csv,mov,ico -nt image,xml -dh ./output/hits".split(" ");
+//            args = "-i en1 -C /Users/harmeet/tmp/pcap.props -ne gif,jpg,jpeg,png,xls,pdf,xlsx,doc,csv,mov,ico -nt image,xml -dh ./output/hits".split(" ");
+//            args = "-i en0 -C /Users/harmeet/tmp/pcap.props -t 30 -ne gif,jpg,jpeg,png,xls,pdf,xlsx,doc,csv,mov,ic -nt image,xml -dh ./output/hits -t 30s -dt /Users/harmeet/tmp/pcap/trace".split(" ");
+
         }
         // configuration file
         File logConfig = new File("./log4j.xml");
@@ -74,6 +81,7 @@ public class Cli
         payloadTestOptions.addOption("C", true, "file with each line having format <comma separated hostnames>[:<port>]=<rule configuration file>. If this is specified, -m, -p and -h parmeters are ignored");
         payloadTestOptions.addOption("ne", true, "(optional) ignore requests for comma separated list of extensions");
         payloadTestOptions.addOption("nt", true, "(optional) ignore requests that result in comma separated list of content type response");
+        payloadTestOptions.addOption("dh", true, "directory where rule hit logs are stored");
         payloadTestOptions.addOption("dt", true, "(optional) if present, directory where tcp flow files are stored. If not specified, tcp flows trace files are not created");
         payloadTestOptions.addOption("v", false, "(optional) if present, verbose output");
 
@@ -90,7 +98,10 @@ public class Cli
         options.addOption("nt", true, "(optional) ignore requests that result in comma separated list of content type response");
         options.addOption("dt", true, "(optional) if present, directory where tcp flow files are stored. If not specified, tcp flows trace files are not created");
         options.addOption("v", false, "(optional) if present, verbose output");
-        CommandLine cmd = getCmdLine(options, payloadTestOptions, args);
+        final CommandLine cmd = getCmdLine(options, payloadTestOptions, args);
+//        for ( Option opt : cmd.getOptions() ) {
+//            System.out.println("opt : "+opt.getOpt()+" : "+opt.getValue());
+//        }
 
         final boolean testMode;
         if ( cmd.hasOption('f') ) {
@@ -117,11 +128,6 @@ public class Cli
         System.loadLibrary("jpcap");
         System.out.println("pcap successfully loaded");
 
-        File ruleHitDir = null;
-        if ( cmd.hasOption("dh") ) {
-            ruleHitDir = new File(cmd.getOptionValue("dh"));
-            ruleHitDir.mkdirs();
-        }
         List<HostPortConf> confList = new ArrayList<HostPortConf>();
         HashSet<String> hostsFilter = new HashSet<String>();
         if ( cmd.hasOption('C') ) {
@@ -153,6 +159,16 @@ public class Cli
                 	confList.add(new HostPortConf(host,httpPort,modSecConf,verbose));
                 }
             }
+        }
+        if ( verbose ) {
+            for (HostPortConf conf : confList ) {
+                System.out.println("conf: "+conf);
+            }
+        }
+        File ruleHitDir = null;
+        if ( cmd.hasOption("dh") ) {
+            ruleHitDir = new File(cmd.getOptionValue("dh"));
+            ruleHitDir.mkdirs();
         }
         IHttpHandler handler = IHttpHandler.Factory.autoReloadModSecurity(confList,ruleHitDir);
         File pcap = ( testMode ) ? new File(cmd.getOptionValue("f")) : null;
