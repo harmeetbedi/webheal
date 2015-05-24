@@ -1,13 +1,11 @@
 package pcap.reconst.reconstructor;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import pcap.reconst.beans.JpcapTcpPacket;
 import pcap.reconst.beans.TcpConnection;
 import pcap.reconst.beans.TcpPacket;
 
@@ -43,7 +41,7 @@ public class StreamReassembler {
         for ( Map.Entry<TcpConnection, TcpStream> entry :reassembledPackets.entrySet() ) {
             TcpConnection conn = entry.getKey();
             TcpStream reassembler = entry.getValue();
-            if ( now - reassembler.getLastPacketTime() > timeout ) { 
+            if ( now - reassembler.getLastPacketRecvTime() > timeout ) { 
                 result.put(conn, entry.getValue());
             }
         }

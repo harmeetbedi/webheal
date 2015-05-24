@@ -1,16 +1,14 @@
 package pcap.reconst;
 
-import org.apache.log4j.Logger;
-import pcap.reconst.beans.Headers;
-import pcap.reconst.beans.TcpConnection;
-import pcap.reconst.compression.CompressionType;
-import pcap.reconst.output.HttpDecodedOutput;
-
-import java.io.*;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import pcap.reconst.beans.Headers;
+import pcap.reconst.compression.CompressionType;
 
 public class Utils extends org.webheal.util.Utils {
     private static Logger log = Logger.getLogger(Utils.class);

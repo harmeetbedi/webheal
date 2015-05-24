@@ -3,19 +3,15 @@ package pcap.reconst.reconstructor;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
-import pcap.reconst.beans.TcpConnection;
-import pcap.reconst.beans.TcpState;
 import pcap.reconst.beans.TcpFragment;
 import pcap.reconst.beans.TcpPacket;
+import pcap.reconst.beans.TcpState;
 
 // reassembels tcp packets for one connection
 public class TcpStream {
     private static final boolean TRACE = false;
-    private long lastPacketTime = -1L;
+    private long lastPacketRecvTime = -1L;
 
     boolean incompleteTcpStream = false;
     boolean emptyTcpStream = true;
@@ -39,7 +35,7 @@ public class TcpStream {
      * The main function of the class receives a tcp packet and reconstructs the stream
      */
     public void addPacket(boolean requestPacketType, TcpPacket tcpPacket) throws Exception {
-        lastPacketTime = System.currentTimeMillis();
+        lastPacketRecvTime = System.currentTimeMillis();
         if ( TRACE ) System.out.println(String.format("captured_len = %d, len = %d, headerlen = %d, datalen = %d", tcpPacket.getCaptureLength(), tcpPacket.getLength(), tcpPacket.getHeaderLength(), tcpPacket.getDataLength()));
         long length = (long) (tcpPacket.getDataLength());
         //if (length == 0) {
@@ -50,8 +46,8 @@ public class TcpStream {
     }
     
     // time when last packet was added
-    public long getLastPacketTime() {
-        return lastPacketTime;
+    public long getLastPacketRecvTime() {
+        return lastPacketRecvTime;
     }
 
 

@@ -9,14 +9,14 @@ import jpcap.packet.TCPPacket;
 import pcap.reconst.beans.JpcapTcpPacket;
 import pcap.reconst.beans.TcpPacket;
 
-public class JpcapPacketProcessor implements PacketReceiver {
-    int packetNumber = 0;
+public class JpcapPacketReceiver implements PacketReceiver {
+    private int packetNumber = 0;
     private StreamReassembler packetReassembler;
     private final boolean verbose;
     private final boolean bufferPackets;
     private final List<TcpPacket> bufferedPackets = new ArrayList<TcpPacket>();
 
-    public JpcapPacketProcessor(StreamReassembler packetReassembler,boolean bufferPackets, boolean verbose) {
+    public JpcapPacketReceiver(StreamReassembler packetReassembler,boolean bufferPackets, boolean verbose) {
         this.packetReassembler = packetReassembler;
         this.verbose = verbose;
         this.bufferPackets = bufferPackets;

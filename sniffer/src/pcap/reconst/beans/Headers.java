@@ -1,15 +1,15 @@
 package pcap.reconst.beans;
 
-import org.apache.commons.lang.StringUtils;
-import pcap.reconst.compression.CompressionType;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
+
+import pcap.reconst.compression.CompressionType;
 
 public class Headers {
     public static final String CONTENT_LENGTH = "Content-Length";

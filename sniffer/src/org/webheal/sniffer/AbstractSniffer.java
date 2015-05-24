@@ -14,14 +14,14 @@ import java.util.Set;
 import pcap.reconst.beans.TcpConnection;
 import pcap.reconst.output.HttpFlow;
 import pcap.reconst.output.HttpRequestResponse;
-import pcap.reconst.reconstructor.JpcapPacketProcessor;
+import pcap.reconst.reconstructor.JpcapPacketReceiver;
 import pcap.reconst.reconstructor.StreamReassembler;
 import pcap.reconst.reconstructor.TcpStream;
 
 public abstract class AbstractSniffer
 {
     protected final StreamReassembler pr;
-    protected final JpcapPacketProcessor jpcapProcessor;
+    protected final JpcapPacketReceiver jpcapProcessor;
     protected final File tcpFlowDir;
     protected final Set<String> notExt;
     protected final Set<String> notContentType;
@@ -38,7 +38,7 @@ public abstract class AbstractSniffer
         this.hostsFilter = hostsFilter;
         this.tcpFlowDir = tcpFlowDir;
         this.pr = pr;
-        jpcapProcessor = new JpcapPacketProcessor(pr,bufferPackets,verbose);
+        jpcapProcessor = new JpcapPacketReceiver(pr,bufferPackets,verbose);
         this.handler = handler;
         this.verbose = verbose;
         this.streamTimeout = timeout;
