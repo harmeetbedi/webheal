@@ -52,6 +52,7 @@
         <copy todir="${bundle}" file="libjpcap.so"/>
         <copy todir="${bundle}" file="test.conf"/>
         <copy todir="${bundle}" file="readme.txt"/>
+        <copy todir="${bundle}" file="webheal.properties"/>
         <delete file="webheal.zip"/>
         <zip destfile="webheal.zip"  basedir="${bundle}" includes="*/**"/>
     </target>
