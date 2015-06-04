@@ -15,8 +15,8 @@ public class Main
     public static void main(String[] args) throws Exception
     {
         if ( args.length == 0 ) {
-//            args = "-f /Users/harmeet/tmp/test.pcap -c webheal.properties".split(" ");
-//            args = "-i en0 -c webheal.properties".split(" ");
+            args = "-f /Users/harmeet/tmp/test.pcap -c webheal.properties".split(" ");
+            args = "-i en0 -c webheal.properties".split(" ");
         }
         // configuration file
         File logConfig = new File("./log4j.xml");

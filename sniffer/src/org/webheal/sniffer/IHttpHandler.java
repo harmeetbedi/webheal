@@ -39,16 +39,16 @@ public interface IHttpHandler
         }
         public static IHttpHandler autoReloadModSecurity(final List<HostPortConf> confList, final File ruleHitDir) throws Exception
         {
-            IExecutor<File, IHttpHandler> factory = new IExecutor<File, IHttpHandler>() {
-                @Override public IHttpHandler execute(File param) throws Exception
+            IExecutor<HostPortConf, IHttpHandler> factory = new IExecutor<HostPortConf, IHttpHandler>() {
+                @Override public IHttpHandler execute(HostPortConf param) throws Exception
                 {
-                    return modSecurity(param,ruleHitDir);
+                    return modSecurity(param.conf,ruleHitDir,param.ruleHitFilePrefix);
                 } 
                 
             };
             return new AutoReloadHttpHandler(confList,factory);
         }
-        public static IHttpHandler modSecurity(final File conf, File ruleHitDir) throws Exception
+        public static IHttpHandler modSecurity(final File conf, File ruleHitDir,String ruleHitFilePrefix) throws Exception
         {
             List<ModSecRule> rules = ModSecRuleParser.getRules(conf);
             List<IHttpHandler> matchers = new ArrayList<IHttpHandler>();
@@ -56,7 +56,7 @@ public interface IHttpHandler
                 if ( StringUtils.isEmpty(rule.id) ) {
                     continue;
                 }
-                matchers.add(new HttpSecRuleMatcher(rule,ruleHitDir));
+                matchers.add(new HttpSecRuleMatcher(rule,ruleHitDir,ruleHitFilePrefix));
                 //break;
             }
             IHttpHandler result = IHttpHandler.Factory.cat(matchers);
@@ -80,20 +80,25 @@ public interface IHttpHandler
                 System.out.println(msg);
             }
         }
-        public static IHttpHandler ruleMatched(File ruleHitDir,ModSecRule rule)
+        public static IHttpHandler ruleMatched(File ruleHitDir,ModSecRule rule, String ruleHitFilePrefix)
         {
-            return new RuleHit(ruleHitDir,rule);
+            return new RuleHit(ruleHitDir,rule,ruleHitFilePrefix);
         }
         private static class RuleHit implements IHttpHandler {
-            private ModSecRule rule;
-            private File ruleHitDir;
+            private final ModSecRule rule;
+            private final File ruleHitDir;
+            private final String ruleHitFilePrefix;
             private static final DateFormat DF = new SimpleDateFormat("yyMMdd-HHmm");
-            private RuleHit(File ruleHitDir, ModSecRule rule) { this.ruleHitDir = ruleHitDir; this.rule = rule; }
+            private RuleHit(File ruleHitDir, ModSecRule rule, String ruleHitFilePrefix) { this.ruleHitDir = ruleHitDir; this.rule = rule; this.ruleHitFilePrefix = ruleHitFilePrefix; }
             @Override public void handleHttp(TcpConnection conn, HttpRequestResponse http) throws Exception
             {
                 HitRow hr = new HitRow(rule,conn,http);
                 if ( ruleHitDir != null ) {
-                    File file = new File(ruleHitDir,"rh-"+hr.date+".txt");
+                    String name = "rh-"+hr.date+".txt";
+                    if ( StringUtils.isNotEmpty(ruleHitFilePrefix) ) {
+                        name = ruleHitFilePrefix+"."+name;
+                    }
+                    File file = new File(ruleHitDir,name);
                     Utils.appendQuietly(file,hr.toString());
                 } else {
                     System.out.println(hr);

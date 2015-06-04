@@ -1,6 +1,5 @@
 package org.webheal.sniffer;
 
-import java.io.File;
 import java.util.List;
 
 import org.webheal.util.IExecutor;
@@ -11,10 +10,10 @@ import pcap.reconst.output.HttpRequestResponse;
 /** reloads http handler if file changes */ 
 public class AutoReloadHttpHandler implements IHttpHandler
 {
-    private final IExecutor<File, IHttpHandler> factory;
+    private final IExecutor<HostPortConf, IHttpHandler> factory;
     private final List<HostPortConf> confList;
 
-    public AutoReloadHttpHandler(final List<HostPortConf> confList,IExecutor<File,IHttpHandler> factory) {
+    public AutoReloadHttpHandler(final List<HostPortConf> confList,IExecutor<HostPortConf,IHttpHandler> factory) {
         this.factory = factory;
         this.confList = confList;
     }

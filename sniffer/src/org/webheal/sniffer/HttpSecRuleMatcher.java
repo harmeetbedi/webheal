@@ -23,11 +23,13 @@ public class HttpSecRuleMatcher implements IHttpHandler
     private final IStat ruleStat;
     private final IStat stat;
     private File ruleHitDir;
-    public HttpSecRuleMatcher(ModSecRule rule, File ruleHitDir) {
+    private final String ruleHitFilePrefix;
+    public HttpSecRuleMatcher(ModSecRule rule, File ruleHitDir,String ruleHitFilePrefix) {
         this.rule = rule;
         this.ruleHitDir = ruleHitDir;
         this.ruleStat = new Stat();
         this.stat = new CatStat(ruleStat,allStat);
+        this.ruleHitFilePrefix = ruleHitFilePrefix;
         //String str = rule.toString();
         //dump(0,rule);
         //System.out.println( rule );
@@ -42,7 +44,7 @@ public class HttpSecRuleMatcher implements IHttpHandler
             failed = false;
             if ( match ) {
                 stat.incrMatches();
-                IHttpHandler.Factory.ruleMatched(ruleHitDir,rule).handleHttp(conn,http);
+                IHttpHandler.Factory.ruleMatched(ruleHitDir,rule,ruleHitFilePrefix).handleHttp(conn,http);
             }
         } finally {
             long tt = System.currentTimeMillis() - startTime;

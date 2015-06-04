@@ -144,7 +144,7 @@ public class Cli
             	if ( parts.length < 1 || parts.length > 2 ) {
             		throw new Exception("Invalid host configuration : "+hostPort);
             	}
-        		HostPortConf hpc = new HostPortConf(parts[0].trim(),port,file,verbose); 
+        		HostPortConf hpc = new HostPortConf(null,port,file,verbose); 
                 httpPortSet.add(port);
                 hostsFilter.add(hpc.host);
                 confList.add(hpc);

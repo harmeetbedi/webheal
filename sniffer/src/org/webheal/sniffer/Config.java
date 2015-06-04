@@ -17,6 +17,7 @@ public class Config
     public final Set<Integer> portFilter = new HashSet<Integer>();
     public final Set<String> hostFilter = new HashSet<String>();
     public final File ruleHitDir;
+    public final File confDir;
     public final File traceDir;
     public final Set<String> notExt;
     public final Set<String> notContentType;
@@ -30,27 +31,32 @@ public class Config
         Map<String,String> map = Utils.readConfig(file);
         verbose = new Boolean(map.get("debug"));
         
+        traceDir = getDir(map,"dir.trace");
+        ruleHitDir = getDir(map,"dir.rule.hit");
+        confDir = getDir(map,"dir.conf");
+
         // hosts
         String hosts = map.get("hosts");
         int defaultPort = new Integer(map.get("default.port"));
+        Set<String> defaultHostnameFilter = Utils.toSet(map.get("default.filter.hostnames"), ",");
+        hostFilter.addAll(defaultHostnameFilter);
         String defaultModSec = map.get("default.modsec.conf");
         if ( StringUtils.isEmpty(hosts)) {
             portFilter.add(defaultPort);
-            hostPorts.add(new HostPortConf("",defaultPort,new File(defaultModSec),verbose));
+            hostPorts.add(new HostPortConf(defaultHostnameFilter,defaultPort,"",new File(defaultModSec),verbose));
         } else {
             String[] hostList = hosts.split(",");
             for ( String hostInp : hostList ) {
                 String host = hostInp.trim().toLowerCase();
                 int port = new Integer(map.get("host."+host+".port"));
                 portFilter.add(port);
-                hostFilter.add(host);
                 String modSecConf = map.get("host."+host+".modsec.conf");
-                hostPorts.add(new HostPortConf(host,port,new File(modSecConf),verbose));
+                String ruleHitFilePrefix = map.get("host."+host+".rulehitfile.prefix");
+                Set<String> hostnameFilter = Utils.toSet(map.get("host."+host+".filter.hostnames"), ",");
+                hostFilter.addAll(hostnameFilter);
+                hostPorts.add(new HostPortConf(hostnameFilter,port,ruleHitFilePrefix,new File(confDir,modSecConf),verbose));
             }
         }
-
-        traceDir = getDir(map,"dir.trace");
-        ruleHitDir = getDir(map,"dir.rule.hit");
         
         notExt = Utils.toSet(map.get("ignore.request.ext"), ",");
         notContentType = Utils.toSet(map.get("ignore.response.contenttype"), ",");
