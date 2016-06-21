@@ -20,6 +20,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
+import org.apache.log4j.xml.DOMConfigurator;
 
 public class Utils
 {
@@ -167,5 +168,22 @@ public class Utils
             }
         }
         return false;
+    }
+    
+    public static File getConfigDir() {
+        File configDir = new File("./config");
+        if ( configDir.isDirectory() ) {
+            return configDir;
+        }
+        configDir = new File("../config");
+        if ( configDir.isDirectory() ) {
+            return configDir;
+        }
+        throw new RuntimeException("No config dir found");
+    }
+    public static void initLogging(File confDir, String appName) {
+        File logConfig = new File(confDir, appName+".log4j.xml");
+        System.out.println("logconfig : "+logConfig.getAbsolutePath());
+        DOMConfigurator.configureAndWatch(logConfig.getAbsolutePath());
     }
 }

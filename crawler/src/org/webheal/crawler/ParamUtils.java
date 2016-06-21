@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
 import au.com.bytecode.opencsv.CSVWriter;
 
 public class ParamUtils  {
-    private static final File DIR_ROOT = new File("./crawlerdiffs");
+    private static final File DIR_ROOT = new File("./crawler-report");
 
     private static final DateFormat FILE_NAME_FMT = new SimpleDateFormat("yyMMdd-HHmm-ssSSS");
 
@@ -41,6 +41,18 @@ public class ParamUtils  {
             writer.close();
         }
         return file;
+    }
+    
+    public static void saveDiff(String site, ParamChangeInfo diff) throws IOException
+    {
+        File dir = init(site);
+        if ( diff == null || !diff.isThereChange()) {
+            return;
+        }
+
+        String fileName = FILE_NAME_FMT.format(new Date(System.currentTimeMillis()))+".diff.txt";
+        File file = new File(dir,fileName);
+        FileUtils.write(file, diff.toString());
     }
     
     public static File getSiteRoot(File rootDir,String site) {
