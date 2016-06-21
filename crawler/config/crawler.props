@@ -1,4 +1,5 @@
 crawl.maxurls=500
 crawl.maxdepth=5
 crawl.rooturl=http://demo.testfire.net/
-crawl.ignore.exts=png,jpg,css,pdf,doc,xlsx
+crawl.ignore.exts=png,jpg,css,pdf,doc,xlsx,exe,js
+crawl.report.dir=./crawler-report

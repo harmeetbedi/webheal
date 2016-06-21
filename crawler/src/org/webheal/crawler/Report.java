@@ -20,17 +20,40 @@ import org.apache.log4j.Logger;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
-public class ParamUtils  {
-    private static final File DIR_ROOT = new File("./crawler-report");
+public class Report  {
+    private static final DateFormat FILE_NAME_FMT = new SimpleDateFormat("yyMMdd.HHmm");
+    private final File dir;
+    private final File urlParamFile;
+    private final File urlFile;
+    private final File diffFile;
 
-    private static final DateFormat FILE_NAME_FMT = new SimpleDateFormat("yyMMdd-HHmm-ssSSS");
+    private Report(File dir, String site) {
+        this.dir = dir;
+        Date dt = new Date(System.currentTimeMillis());
+        String filePrefix = FILE_NAME_FMT.format(dt);
+        urlParamFile = new File(dir,filePrefix+".urlparam.csv");
+        urlFile = new File(dir,filePrefix+".url.txt");
+        diffFile = new File(dir,filePrefix+".diff.txt");
+    }
 
-    public static File saveParams(String site, Collection<PageFormParam> formParams) throws IOException
+    public static Report init(File rootDir, String site) throws IOException {
+        if ( rootDir == null ) {
+            rootDir = new File("./crawler-report");
+        }
+        StringBuffer buf = new StringBuffer();
+        for ( char c : site.toLowerCase().toCharArray() ) {
+            if ( Character.isLowerCase(c)) {
+                buf.append(c);
+            }
+        }
+        File dir = new File(rootDir, buf.toString());
+        dir.mkdirs();
+        return new Report(dir,site); 
+    }
+
+    void saveReport(Collection<PageFormParam> formParams) throws IOException
     {
-        File dir = init(site);
-        String fileName = FILE_NAME_FMT.format(new Date(System.currentTimeMillis()))+".csv";
-        File file = new File(dir,fileName);
-        CSVWriter writer = new CSVWriter(new FileWriter(file), ',');
+        CSVWriter writer = new CSVWriter(new FileWriter(urlParamFile), ',');
         try {
             writer.writeNext(new String[]{"Form Action", "Form Name", "Form Method", "Input", "Page Uri", "Page Title"});
             for ( PageFormParam param : formParams ) {
@@ -40,41 +63,27 @@ public class ParamUtils  {
         } finally {
             writer.close();
         }
-        return file;
     }
     
-    public static void saveDiff(String site, ParamChangeInfo diff) throws IOException
+    public void writeCrawledLinks(Collection<String> urls) throws IOException
     {
-        File dir = init(site);
+        FileUtils.writeLines(urlFile, urls);
+    }
+
+    public void saveDiff(ParamChangeInfo diff) throws IOException
+    {
         if ( diff == null || !diff.isThereChange()) {
             return;
         }
 
-        String fileName = FILE_NAME_FMT.format(new Date(System.currentTimeMillis()))+".diff.txt";
-        File file = new File(dir,fileName);
-        FileUtils.write(file, diff.toString());
+        FileUtils.write(diffFile, diff.toString());
     }
     
-    public static File getSiteRoot(File rootDir,String site) {
-        StringBuffer buf = new StringBuffer();
-        for ( char c : site.toLowerCase().toCharArray() ) {
-            if ( Character.isLowerCase(c)) {
-                buf.append(c);
-            }
-        }
-        return new File(rootDir, buf.toString());
-    }
-    public static void cleanup(String site) throws IOException {
-        FileUtils.deleteDirectory(getSiteRoot(DIR_ROOT,site));
-    }
-    public static File init(String site) throws IOException {
-        File file = getSiteRoot(DIR_ROOT,site);
-        file.mkdirs();
-        return file; 
+    public void cleanup(String site) throws IOException {
+        FileUtils.deleteDirectory(dir);
     }
 
-    public static long getLastCrawlTime(Logger logger, String site) throws IOException, ParseException {
-        File dir = init(site);
+    public long getLastCrawlTime(Logger logger, String site) throws IOException, ParseException {
         File[] files = dir.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name)
             {
@@ -93,8 +102,7 @@ public class ParamUtils  {
         //logger.info("LastCrawl File : "+file.getName()+", "+name);
         return dt.getTime();
     }
-    public static ParamChangeInfo getDiff(String site) throws IOException {
-        File dir = init(site);
+    public ParamChangeInfo getDiff() throws IOException {
         File[] files = dir.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name)
             {

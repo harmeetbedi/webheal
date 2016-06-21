@@ -14,13 +14,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.webheal.crawler.Report.ParamChangeInfo;
 
 public class Crawler
 {
@@ -30,33 +30,12 @@ public class Crawler
     private final TreeMap<String, PageFormParam> formParams = new TreeMap<String, PageFormParam>();
     private int crawlCount;
     private final Config conf;
+    private final Report report;
 
-    public Crawler(Config conf) throws MalformedURLException {
+    public Crawler(Config conf) throws IOException {
         this.conf = conf;
+        report = Report.init(new File(conf.reportDir), conf.rootUrl); 
     }
-
-    // public static void crawl(String rootUrl, int maxDepth, int maxUrls) throws IOException, EmailException
-    // {
-    // Crawler crawler = new Crawler(rootUrl,maxDepth,maxUrls);
-    // crawler.log("crawl "+rootUrl+" "+maxDepth+" "+maxUrls);
-    // crawler.crawl();
-    // ParamUtils.saveParams(rootUrl,crawler.formParams.values());
-    // ParamUtils.ParamChangeInfo diff = ParamUtils.getDiff(rootUrl);
-    // if ( diff != null ) {
-    // final String subject;
-    // String body = diff.toString();
-    // List<File> attachments = new ArrayList<File>();
-    // if ( diff.isThereChange() ) {
-    // subject = "Param Diff "+rootUrl;
-    // attachments.add(diff.first);
-    // if ( diff.second != null ) {
-    // attachments.add(diff.second);
-    // }
-    // } else {
-    // subject = "No Param Diff "+rootUrl;
-    // }
-    // }
-    // }
 
     public void crawl()
     {
@@ -186,17 +165,12 @@ public class Crawler
     {
         return crawledLinks.keySet();
     }
-    public void writeCrawledLinks(File file) throws IOException
-    {
-        File dir = file.getParentFile();
-        dir.mkdirs();
-        FileUtils.writeLines(file, crawledLinks.keySet());
-    }
 
     public void report() throws IOException
     {
-        ParamUtils.saveParams(conf.rootUrl, formParams.values());
-        ParamUtils.ParamChangeInfo diff = ParamUtils.getDiff(conf.rootUrl);
-        ParamUtils.saveDiff(conf.rootUrl, diff);
+        report.saveReport(formParams.values());
+        ParamChangeInfo diff = report.getDiff();
+        report.writeCrawledLinks(getCrawledLinks());
+        report.saveDiff(diff);
     }
 }

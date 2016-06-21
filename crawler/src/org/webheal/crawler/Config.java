@@ -16,12 +16,14 @@ public class Config
     public final int maxDepth;
     public final String domain;
     public final String rootUrl;
+    public final String reportDir;
     public final Collection<String> ignoreExts;
     Config(File dir) throws IOException {
         Properties prop = Utils.load(new File(dir,"crawler.props"));
         this.maxUrls = Integer.parseInt(prop.getProperty("crawl.maxurls")); 
         this.maxDepth = Integer.parseInt(prop.getProperty("crawl.maxdepth")); 
         this.rootUrl = prop.getProperty("crawl.rooturl");
+        this.reportDir = prop.getProperty("crawl.report.dir");
         ignoreExts = new TreeSet<String>();
         ignoreExts.addAll(Arrays.asList(prop.getProperty("crawl.ignore.exts").split(",")));
         this.domain = new URL(this.rootUrl).getHost();
