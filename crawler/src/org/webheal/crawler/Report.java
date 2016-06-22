@@ -1,7 +1,6 @@
 package org.webheal.crawler;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -17,8 +16,8 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-
-import au.com.bytecode.opencsv.CSVWriter;
+import org.webheal.util.PageFormParam;
+import org.webheal.util.Utils;
 
 public class Report  {
     private static final DateFormat FILE_NAME_FMT = new SimpleDateFormat("yyMMdd.HHmm");
@@ -27,7 +26,7 @@ public class Report  {
     private final File urlFile;
     private final File diffFile;
 
-    private Report(File dir, String site) {
+    Report(File dir) {
         this.dir = dir;
         Date dt = new Date(System.currentTimeMillis());
         String filePrefix = FILE_NAME_FMT.format(dt);
@@ -40,29 +39,13 @@ public class Report  {
         if ( rootDir == null ) {
             rootDir = new File("./crawler-report");
         }
-        StringBuffer buf = new StringBuffer();
-        for ( char c : site.toLowerCase().toCharArray() ) {
-            if ( Character.isLowerCase(c)) {
-                buf.append(c);
-            }
-        }
-        File dir = new File(rootDir, buf.toString());
-        dir.mkdirs();
-        return new Report(dir,site); 
+        File dir = Utils.getSubDir(rootDir, site, true);
+        return new Report(dir); 
     }
 
     void saveReport(Collection<PageFormParam> formParams) throws IOException
     {
-        CSVWriter writer = new CSVWriter(new FileWriter(urlParamFile), ',');
-        try {
-            writer.writeNext(new String[]{"Form Action", "Form Name", "Form Method", "Input", "Page Uri", "Page Title"});
-            for ( PageFormParam param : formParams ) {
-                param.writeToCsv(writer);
-            }
-            writer.flush();
-        } finally {
-            writer.close();
-        }
+        PageFormParam.writeCsv(urlParamFile, formParams);
     }
     
     public void writeCrawledLinks(Collection<String> urls) throws IOException

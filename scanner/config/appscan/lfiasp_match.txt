@@ -1,0 +1,3 @@
+[boot loader]
+[operating systems]
+multi(0)disk(0)rdisk(1)partition(1)

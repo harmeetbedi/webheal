@@ -1,0 +1,1 @@
+() { :;};echo X-CVE-2014-6271: TRUE##check-response-header

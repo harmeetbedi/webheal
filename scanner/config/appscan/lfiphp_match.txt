@@ -1,0 +1,5 @@
+bin:x:1:1:Binary
+daemon:/sbin:/sbin/nologin
+adm:/var/adm:/sbin/nologin
+adm:/var/adm:/
+var/spool/lpd:

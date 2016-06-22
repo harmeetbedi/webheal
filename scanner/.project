@@ -10,8 +10,27 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.m2e.core.maven2Builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 	</buildSpec>
 	<natures>
+		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>src-common</name>
+			<type>2</type>
+			<locationURI>WH_CRAWLER/src-common</locationURI>
+		</link>
+	</linkedResources>
+	<variableList>
+		<variable>
+			<name>WH_CRAWLER</name>
+            <value>$%7BPARENT-1-PROJECT_LOC%7D/crawler</value>
+		</variable>
+	</variableList>
 </projectDescription>

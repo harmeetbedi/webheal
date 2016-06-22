@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+    <appender name="debug" class="org.apache.log4j.RollingFileAppender">
+        <param name="maxFileSize" value="5000KB" />
+        <param name="maxBackupIndex" value="10" />
+        <param name="File" value="${user.dir}/logs/debug.log" />
+        <param name="threshold" value="debug" />
+        <param name="append" value="false" />
+        <param name="immediateFlush" value="true" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d [%t] %5.5p %c{1}: %m%n" />
+        </layout>
+    </appender>
+
+    <appender name="crawler" class="org.apache.log4j.RollingFileAppender">
+        <param name="maxFileSize" value="5000KB" />
+        <param name="maxBackupIndex" value="10" />
+        <param name="File" value="${user.dir}/logs/crawler.log" />
+        <param name="threshold" value="debug" />
+        <param name="append" value="false" />
+        <param name="immediateFlush" value="true" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d [%t] %5.5p %c{1}: %m%n" />
+        </layout>
+    </appender>
+
+    <logger name="crawler" additivity="false">
+      <level value="debug" />
+      <appender-ref ref="crawler" />
+   </logger>
+   
+    <root>
+        <priority value="debug" />
+        <appender-ref ref="debug" />
+    </root>
+
+</log4j:configuration>

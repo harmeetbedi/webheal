@@ -1,0 +1,9 @@
+crawl.report.dir=../crawler/crawler-report
+scanner.report.dir=./scanner-report
+scanner.rooturl=http://demo.testfire.net/
+
+#Connection timeout
+conn.timeout=5s
+
+#pause between page crawling
+pause.pagevisit=1s

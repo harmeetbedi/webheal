@@ -1,0 +1,91 @@
+﻿System\.Data\.OleDb\.OleDbException
+\[SQL Server\]
+\[Microsoft\]\[ODBC SQL Server Driver\]
+\[SQLServer JDBC Driver\]
+System\.Data\.SqlClient\.SqlException
+'80040e14'
+'800a000d'
+mssql_query\(\)
+odbc_exec\(\)
+Microsoft OLE DB Provider for
+Incorrect syntax near
+Sintaxis incorrecta cerca de
+Syntax error in string in query expression
+ADODB\.Field \(0x800A0BCD\)<br>
+Procedure '[^']+' requires parameter '[^']+'
+ADODB\.Recordset\'
+Unclosed quotation mark (before|after) the character string
+\[CLI Driver\]
+\[DB26000\]
+Syntax error in query expression
+Data type mismatch in criteria expression\.
+Microsoft JET Database Engine
+(PLS|ORA)-[0-9][0-9][0-9][0-9]
+PostgreSQL query failed:
+supplied argument is not a valid MySQL result resource
+pg_query\(\)\s\[
+pg_exec\(\)\s\[
+mysql_fetch_array\(\)
+on MySQL result index
+(?:You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '.*?' at line .*?)
+You have an error in your SQL syntax
+MySQL server version for the right syntax to use
+\[MySQL\]\[ODBC
+Column count doesn't match
+the used select statements have different number of columns
+Table '[^']+' doesn't exist
+com\.informix\.jdbc
+Dynamic Page Generation Error:
+An illegal character has been found in the statement
+<b>Warning<b>\: ibase_
+Dynamic SQL Error
+\[DM_QUERY_E_SYNTAX\]
+has occurred in the vicinity of:
+A Parser Error \(syntax error\)
+java\.sql\.SQLException
+Unexpected end of command in statement
+SQL syntax.*MySQL
+Warning.*mysql_.*
+valid MySQL result
+PostgreSQL.*ERROR
+Warning.*pg_.*
+valid PostgreSQL result
+Driver.*SQL[\-_\ ]*Server
+OLE DB.*SQL Server
+SQL Server.*Driver
+Warning.*mssql_.*
+Microsoft Access Driver
+JET Database Engine
+Access Database
+Oracle error
+Oracle.*Driver
+Warning.*oci_.*
+Warning.*ora_.*
+CLI Driver.*DB2
+DB2 SQL error
+Exception.*Informix
+Sybase message
+Warning.*sqlite_.*
+SQLite/JDBCDriver
+SQLite\.Exception
+System\.Data\.SQLite\.SQLiteException
+Oracle\.DataAccess\.Client\.OracleException
+'[^']*'\sis\snull\sor\snot\san\sobject
+Could not update; currently locked by user '.*?' on machine '.*?'
+Query\sfailed\:\sERROR\:
+Query failed\:\sERROR\:\s\ssyntax error at or near
+Incorrect column name
+Can't find record in
+Unknown table
+Incorrect column specifier for column
+Invalid SQL\:
+parse error at or near
+\)\: encountered SQLException \[
+\[ODBC Informix driver\]\[Informix\]
+\[Microsoft\]\[ODBC Microsoft Access 97 Driver\]
+SQL command not properly ended
+unexpected end of SQL command
+Query failed: ERROR\: unterminated quoted string at or near
+expects parameter 1 to be resource
+ERROR: operator does not exist: unknown
+Error executing query

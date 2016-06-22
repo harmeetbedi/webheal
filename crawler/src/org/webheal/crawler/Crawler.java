@@ -21,6 +21,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.webheal.crawler.Report.ParamChangeInfo;
+import org.webheal.util.PageFormParam;
+import org.webheal.util.Utils;
 
 public class Crawler
 {
@@ -34,7 +36,8 @@ public class Crawler
 
     public Crawler(Config conf) throws IOException {
         this.conf = conf;
-        report = Report.init(new File(conf.reportDir), conf.rootUrl); 
+        File dir = Utils.getSubDir(new File(conf.reportDir), conf.rootUrl, true);
+        report = new Report(dir); 
     }
 
     public void crawl()

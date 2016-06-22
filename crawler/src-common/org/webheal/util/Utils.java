@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
+import java.util.TreeMap;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -121,9 +122,12 @@ public class Utils
         return hexData.toString();
     }
     public static List<String> readLines(File file) throws Exception {
+        List<String> set = new ArrayList<String>();
+        if ( file == null ) {
+            return set;
+        }
         Reader in = new FileReader(file);
         try {
-            List<String> set = new ArrayList<String>();
             readLines(in,set,true,true,true);
             return set;
         } finally {
@@ -185,5 +189,35 @@ public class Utils
         File logConfig = new File(confDir, appName+".log4j.xml");
         System.out.println("logconfig : "+logConfig.getAbsolutePath());
         DOMConfigurator.configureAndWatch(logConfig.getAbsolutePath());
+    }
+    public static File getLastFileWithSuffix(File dir, String suffix) {
+        TreeMap<String,File> map = new TreeMap<String,File>();
+        for ( File file : dir.listFiles() ) {
+            String name = file.getName();
+            if ( name.endsWith(suffix) ) {
+                map.put(name, file);
+            }
+        }
+        return ( map.size() == 0 ) ? null : map.lastEntry().getValue();
+    }
+
+    // removes special characters for a name
+    public static File getSubDir(File dir, String site,boolean create) {
+        StringBuilder buf = new StringBuilder();
+        for ( char c : site.toLowerCase().toCharArray() ) {
+            if ( Character.isLowerCase(c)) {
+                buf.append(c);
+            }
+        }
+        File file = new File(dir,buf.toString());
+        if( create ) {
+            file.mkdirs();
+        }
+        return file;
+    }
+    public static File getSubDir(String reportDir, String rootUrl, boolean create)
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
