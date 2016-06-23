@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.webheal.util.NameValue;
 
+// Extract params from URL. Params has name and value  
+//  Use attack vectors to replace value and make attack URLs
 class UrlParams
 {
     public final String url;

@@ -13,9 +13,16 @@ public abstract class AbstractUrlAttack extends Logable
     protected UrlClient uc = new UrlClient();
     protected final Set<String> alreadyDone = new HashSet<String>();
     protected AttackAndResponseMatch conf;
+    protected boolean nextAttackExists = true;
 
     public void configure(AttackAndResponseMatch conf) {
         this.conf = conf;
+    }
+
+    // there are more attacks or all done
+    public boolean hasNext() throws Exception
+    {
+        return nextAttackExists;
     }
 
     public boolean attack(String url) throws Exception
@@ -45,8 +52,12 @@ public abstract class AbstractUrlAttack extends Logable
 
     protected final String wget(String trgUrl)
     {
+        return wget(trgUrl,false);
+    }
+    protected final String wget(String trgUrl,boolean debug)
+    {
         try {
-            UrlResponse resp = uc.wget(trgUrl);
+            UrlResponse resp = uc.wget(trgUrl,debug);
             String data = resp.resultBody;
             //System.out.println("    "+trgUrl+" : "+data.length());
             return data;

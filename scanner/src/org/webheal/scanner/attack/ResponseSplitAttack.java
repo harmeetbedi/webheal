@@ -16,7 +16,7 @@ public class ResponseSplitAttack extends AbstractUrlAttack
             for (String attack : attacks) {
                 String trgUrl = src.replaceParamValue(pnv.name, attack);
                 if ( alreadyDone.contains(trgUrl) ) {
-                    System.out.println("    (alreadydone) "+trgUrl);
+                    //System.out.println("    (alreadydone) "+trgUrl);
                     return false;
                 }
                 alreadyDone.add(trgUrl);

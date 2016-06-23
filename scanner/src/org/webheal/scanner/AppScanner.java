@@ -7,10 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.webheal.scanner.attack.AbstractUrlAttack;
+import org.webheal.scanner.attack.AspxDebugAttack;
 import org.webheal.scanner.attack.AttackAndResponseMatch;
 import org.webheal.scanner.attack.DefaultUrlAttack;
 import org.webheal.scanner.attack.RFIAttack;
 import org.webheal.scanner.attack.ResponseSplitAttack;
+import org.webheal.scanner.attack.RobotTxtAttack;
 import org.webheal.scanner.attack.XPathAttack;
 import org.webheal.util.PageFormParam;
 import org.webheal.util.Utils;
@@ -25,10 +27,13 @@ public class AppScanner
 
         AppScanner scanner = new AppScanner(conf);
         //System.out.println(scanner.pages);
-        //scanner.xpathAttack();
-        //scanner.responseSplitAttackAttack();
-        //scanner.lfiWinAttack();
-        //scanner.lfiLinuxAttack();
+//        scanner.xpathAttack();
+//        scanner.rfiAttack();
+//        scanner.responseSplitAttackAttack();
+//        scanner.lfiWinAttack();
+//        scanner.lfiLinuxAttack();
+//        scanner.robotsTxtAttack();
+        scanner.aspxDebugAttack();
     }
 
     private final AppScanConfig conf;
@@ -74,20 +79,32 @@ public class AppScanner
     {
         attack(new ResponseSplitAttack(),conf.rfi);
     }
+    private void robotsTxtAttack() throws Exception
+    {
+        attack(new RobotTxtAttack(),null);
+    }
+    private void aspxDebugAttack() throws Exception
+    {
+        attack(new AspxDebugAttack(),null);
+    }
     
     private void attack(AbstractUrlAttack attack,AttackAndResponseMatch conf) throws Exception {
+        boolean fail = false;
         attack.configure(conf);
         try {
             for ( String pageUrl : pages.keySet() ) {
-                boolean result = attack.attack(pageUrl);
-                if ( result ) {
-                    System.out.println("Successful Attack : "+pageUrl);
-                } else {
-                    //System.out.println("url : "+pageUrl);
+                if ( !attack.hasNext() ) {
+                    break;
+                }
+                fail = attack.attack(pageUrl);
+                if ( fail ) {
+                    break;
                 }
             }
         } finally {
             attack.done();
         }
+        String result = String.format("%s : %s", attack.getClass().getSimpleName(),fail ? "FAIL" : "PASS");
+        System.out.println(result);
     }
 }

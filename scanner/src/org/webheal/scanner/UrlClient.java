@@ -5,6 +5,7 @@ import java.net.HttpURLConnection;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -84,8 +85,22 @@ public class UrlClient extends Logable
     }
 
     public UrlResponse wget(String url) throws IOException {
+        return wget(url,false);
+    }
+    public UrlResponse wget(String url, boolean debug) throws IOException {
         //AppScanConfig conf = AppScanConfig.get();
-        HttpGet get = new HttpGet(url);
+        final HttpGet get;
+        if (debug) {
+            get = new HttpGet(url) { 
+                public String getMethod() {
+                    return "DEBUG";
+                }
+            };
+            get.setHeader("Command", "stop-debug");
+        } else {
+            get = new HttpGet(url);
+        }
+        
         HttpResponse resp = hc.execute(get);
         int code = resp.getStatusLine().getStatusCode();
         if ( code == HttpURLConnection.HTTP_OK) {
