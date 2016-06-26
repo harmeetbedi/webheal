@@ -1,6 +1,10 @@
 package org.webheal.scanner;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
@@ -23,6 +27,8 @@ public class AppScanConfig
     public final List<String> attackBig;
     public final List<String> blindAttack;
     public final List<String> dirListing;
+    public final List<String> sensitiveFiles;
+    public final List<String> okResponseFor404;
     public final String proxyHost;
     public final int proxyPort;
     public final boolean proxyEnabled;
@@ -53,6 +59,8 @@ public class AppScanConfig
         attackBig = Utils.readLines(new File(appScanDir,"sqlbig.txt"));
         blindAttack = Utils.readLines(new File(appScanDir,"blindsql.txt"));
         dirListing = Utils.readLines(new File(appScanDir,"directory_listing_match.txt"));
+        sensitiveFiles = Utils.readLines(new File(appScanDir,"sensitive.txt"));
+        okResponseFor404 = Utils.readLines(new File(appScanDir,"is404.txt"));
     }
     
     private static AppScanConfig s_inst;
@@ -62,5 +70,21 @@ public class AppScanConfig
     static AppScanConfig init(File dir) throws Exception {
         s_inst = new AppScanConfig(dir);
         return s_inst;
+    }
+    public Collection<String> geSensitiveUrls() throws MalformedURLException
+    {
+        List<String> list = new ArrayList<String>();
+        URL base = new URL(baseUrl);
+        for ( String item : sensitiveFiles ) {
+            String file = item.startsWith("/") ? item : "/"+item;
+            URL url = new URL(base.getProtocol(),base.getHost(), base.getPort(),file);
+            list.add(url.toExternalForm());
+        }
+        return list;
+    }
+    public String getRobotsUrl() throws MalformedURLException {
+        URL base = new URL(baseUrl);
+        URL url = new URL(base.getProtocol(), base.getHost(),base.getPort(), "/robots.txt");
+        return url.toExternalForm();
     }
 }

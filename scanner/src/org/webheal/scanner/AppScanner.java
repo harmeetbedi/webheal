@@ -2,6 +2,8 @@ package org.webheal.scanner;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -10,9 +12,12 @@ import org.webheal.scanner.attack.AbstractUrlAttack;
 import org.webheal.scanner.attack.AspxDebugAttack;
 import org.webheal.scanner.attack.AttackAndResponseMatch;
 import org.webheal.scanner.attack.DefaultUrlAttack;
+import org.webheal.scanner.attack.DirListingAttack;
+import org.webheal.scanner.attack.EmailExposedAttack;
 import org.webheal.scanner.attack.RFIAttack;
 import org.webheal.scanner.attack.ResponseSplitAttack;
 import org.webheal.scanner.attack.RobotTxtAttack;
+import org.webheal.scanner.attack.SensitiveFileAttack;
 import org.webheal.scanner.attack.XPathAttack;
 import org.webheal.util.PageFormParam;
 import org.webheal.util.Utils;
@@ -32,8 +37,11 @@ public class AppScanner
 //        scanner.responseSplitAttackAttack();
 //        scanner.lfiWinAttack();
 //        scanner.lfiLinuxAttack();
-//        scanner.robotsTxtAttack();
-        scanner.aspxDebugAttack();
+        //scanner.robotsTxtAttack();
+        //scanner.aspxDebugAttack();
+        //scanner.dirListingAttack();
+        //scanner.sensitiveFilesAttack();
+        //scanner.emailExposedAttack();
     }
 
     private final AppScanConfig conf;
@@ -79,32 +87,56 @@ public class AppScanner
     {
         attack(new ResponseSplitAttack(),conf.rfi);
     }
-    private void robotsTxtAttack() throws Exception
-    {
-        attack(new RobotTxtAttack(),null);
-    }
     private void aspxDebugAttack() throws Exception
     {
         attack(new AspxDebugAttack(),null);
     }
+    private void dirListingAttack() throws Exception
+    {
+        attack(new DirListingAttack(),new AttackAndResponseMatch(conf.dirListing,null));
+    }
+    private void robotsTxtAttack() throws Exception
+    {
+        Collection<String> pagelist = Arrays.asList(conf.getRobotsUrl());
+        attack(pagelist,new RobotTxtAttack(),null,-1);
+    }
+    private void sensitiveFilesAttack() throws Exception
+    {
+        attack(conf.geSensitiveUrls(), new SensitiveFileAttack(), null,-1);
+    }
+    private void emailExposedAttack() throws Exception
+    {
+        attack(new EmailExposedAttack(),null);
+    }
     
     private void attack(AbstractUrlAttack attack,AttackAndResponseMatch conf) throws Exception {
-        boolean fail = false;
+        attack(pages.keySet(),attack,conf,1);
+    }
+    private void attack(Collection<String> pagelist,AbstractUrlAttack attack,AttackAndResponseMatch conf, int maxFailCount) throws Exception {
+        int failCount = 0;
         attack.configure(conf);
         try {
-            for ( String pageUrl : pages.keySet() ) {
+            System.out.println(pagelist);
+            for ( String pageUrl : pagelist ) {
                 if ( !attack.hasNext() ) {
                     break;
                 }
-                fail = attack.attack(pageUrl);
+                boolean fail = attack.attack(pageUrl);
                 if ( fail ) {
-                    break;
+                    failCount++;
+                    String result = String.format("Attack Exists (%s) : %s", attack.getClass().getSimpleName(),pageUrl);
+                    System.out.println(result);
+                    if ( maxFailCount > 0 && failCount >= maxFailCount ) {
+                        break;
+                    }
                 }
             }
         } finally {
             attack.done();
         }
-        String result = String.format("%s : %s", attack.getClass().getSimpleName(),fail ? "FAIL" : "PASS");
-        System.out.println(result);
+        if ( failCount == 0 ) {
+            String result = String.format("Attack NotExists %s", attack.getClass().getSimpleName());
+            System.out.println(result);
+        }
     }
 }

@@ -1,7 +1,5 @@
 package org.webheal.scanner.attack;
 
-import java.net.URL;
-
 import org.webheal.scanner.UrlResponse;
 
 /**
@@ -14,16 +12,12 @@ import org.webheal.scanner.UrlResponse;
  */
 public class RobotTxtAttack extends AbstractUrlAttack
 {
+    protected boolean isExclude(String url) {
+        return false;
+    }
     @Override protected boolean attack(UrlParams src) throws Exception
     {
-        URL url = new URL(src.url);
-        url = new URL(url.getProtocol(), url.getHost(),url.getPort(), "/robots.txt");
-        nextAttackExists = false;
-        try {
-            UrlResponse resp = uc.wget(url.toExternalForm());
-            return (resp.code == 200);
-        } catch (Throwable e) {
-            return false;
-        }
+        UrlResponse resp = uc.wget(src.url);
+        return resp.isResponseOk();
     }
 }

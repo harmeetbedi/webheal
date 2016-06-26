@@ -1,0 +1,12 @@
+HTTP 404 Not Found
+The webpage cannot be found
+>The page cannot be found<
+HTTP Error 404
+The page cannot be found
+<h2>404 - File or directory not found.</h2>
+<h2> <i>The resource cannot be found.</i> </h2></span>
+Oops. The Page you requested does not exist.
+The webpage cannot be found
+<title>404 Not Found</title>
+<h1>The page cannot be found</h1>
+>Object not found!<
