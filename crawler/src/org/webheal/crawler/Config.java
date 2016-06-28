@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Properties;
 import java.util.TreeSet;
 
+import org.webheal.util.ServletParamHelper;
 import org.webheal.util.Utils;
 
 public class Config
@@ -27,6 +28,14 @@ public class Config
         ignoreExts = new TreeSet<String>();
         ignoreExts.addAll(Arrays.asList(prop.getProperty("crawl.ignore.exts").split(",")));
         this.domain = new URL(this.rootUrl).getHost();
+    }
+    Config(Config src, ServletParamHelper req) throws IOException {
+        this.maxUrls = req.getInt("maxurls",src.maxUrls);
+        this.maxDepth = req.getInt("maxdepth",src.maxDepth);
+        this.domain = req.getString("domain", src.domain);
+        this.rootUrl = "http://"+domain+"/";
+        this.reportDir = src.reportDir;
+        this.ignoreExts = src.ignoreExts;
     }
     @Override public String toString() {
         return String.format("maxUrls=%d, maxDepth=%d, rootUrl=%s, ignoreExts=%s",maxUrls,maxDepth,rootUrl,ignoreExts.toString());

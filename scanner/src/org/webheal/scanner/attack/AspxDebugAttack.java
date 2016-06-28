@@ -1,6 +1,7 @@
 package org.webheal.scanner.attack;
 
 import org.apache.commons.lang3.StringUtils;
+import org.webheal.scanner.visitor.AttackVisitor;
 
 /**
  * https://exchange.xforce.ibmcloud.com/vulnerabilities/1533
@@ -32,5 +33,10 @@ public class AspxDebugAttack extends AbstractUrlAttack
         }
         String resp = wget(url,true);
         return ( StringUtils.isNotEmpty(resp) && resp.trim().toLowerCase().startsWith("ok") );
+    }
+    @Override public void accept(AttackVisitor visitor) throws Exception
+    {
+        visitor.visitAspxDebugAttack(this);
+        
     }
 }

@@ -7,3 +7,5 @@ conn.timeout=5s
 
 #pause between page crawling
 pause.pagevisit=1s
+
+attacks=sensitivefile,robot

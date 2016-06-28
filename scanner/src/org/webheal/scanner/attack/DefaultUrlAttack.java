@@ -3,7 +3,7 @@ package org.webheal.scanner.attack;
 import org.webheal.util.NameValue;
 import org.webheal.util.Utils;
 
-public class DefaultUrlAttack extends AbstractUrlAttack
+public abstract class DefaultUrlAttack extends AbstractUrlAttack
 {
     @Override protected boolean attack(UrlParams src) throws Exception
     {

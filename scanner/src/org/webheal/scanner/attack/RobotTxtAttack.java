@@ -1,6 +1,7 @@
 package org.webheal.scanner.attack;
 
 import org.webheal.scanner.UrlResponse;
+import org.webheal.scanner.visitor.AttackVisitor;
 
 /**
  * https://exchange.xforce.ibmcloud.com/vulnerabilities/1533
@@ -19,5 +20,10 @@ public class RobotTxtAttack extends AbstractUrlAttack
     {
         UrlResponse resp = uc.wget(src.url);
         return resp.isResponseOk();
+    }
+    @Override public void accept(AttackVisitor visitor) throws Exception
+    {
+        visitor.visitRobotTxtAttack(this);
+        
     }
 }

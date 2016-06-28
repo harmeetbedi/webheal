@@ -1,7 +1,7 @@
 package org.webheal.scanner.attack;
 
 import org.apache.http.Header;
-
+import org.webheal.scanner.visitor.AttackVisitor;
 import org.webheal.util.NameValue;
 
 public class ResponseSplitAttack extends AbstractUrlAttack
@@ -28,6 +28,12 @@ public class ResponseSplitAttack extends AbstractUrlAttack
             }
         }
         return false;
+    }
+
+    @Override public void accept(AttackVisitor visitor) throws Exception
+    {
+        visitor.visitResponseSplitAttack(this);
+        
     }
 
 

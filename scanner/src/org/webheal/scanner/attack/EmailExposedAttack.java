@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.webheal.scanner.UrlResponse;
+import org.webheal.scanner.visitor.AttackVisitor;
 
 /**
  * Crawlers may extract email address from webpages and 
@@ -38,5 +39,9 @@ public class EmailExposedAttack extends AbstractUrlAttack
           emails.add(matcher.group());
         }
         System.out.println(emails);
+    }
+    @Override public void accept(AttackVisitor visitor) throws Exception
+    {
+        visitor.visitEmailExposedAttack(this);
     }
 }

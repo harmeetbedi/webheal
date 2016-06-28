@@ -70,6 +70,7 @@ public class Crawler
         if (crawledLinks.containsKey(url)) {
             return;
         }
+        newPageFound(url);
         String title = driver.getTitle();
         log(depth + "," + crawlCount + ": " + url + ", " + title);
         // System.out.println(driver.getPageSource());
@@ -110,7 +111,11 @@ public class Crawler
         }
     }
 
-    private void log(Object msg)
+    protected void newPageFound(String url)
+    {
+    }
+
+    protected void log(Object msg)
     {
         Logger.getLogger("crawler").info(msg);
         msg = (new Date(System.currentTimeMillis())) + " : " + msg;

@@ -1,6 +1,7 @@
 package org.webheal.scanner.attack;
 
 import org.webheal.scanner.UrlResponse;
+import org.webheal.scanner.visitor.AttackVisitor;
 
 /**
  * checks if there sensitive files are exposed.
@@ -17,5 +18,10 @@ public class SensitiveFileAttack extends AbstractUrlAttack
     {
         UrlResponse resp = uc.wget(src.url);
         return resp.isResponseOk();
+    }
+    @Override public void accept(AttackVisitor visitor) throws Exception
+    {
+        visitor.visitSensitiveFileAttack(this);
+        
     }
 }

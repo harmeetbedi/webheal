@@ -6,6 +6,7 @@ import java.util.Set;
 import org.apache.http.Header;
 import org.webheal.scanner.UrlClient;
 import org.webheal.scanner.UrlResponse;
+import org.webheal.scanner.visitor.AttackVisitor;
 import org.webheal.util.Logable;
 
 public abstract class AbstractUrlAttack extends Logable
@@ -80,4 +81,5 @@ public abstract class AbstractUrlAttack extends Logable
             return null;
         }
     }
+    public abstract void accept(AttackVisitor visitor) throws Exception;
 }

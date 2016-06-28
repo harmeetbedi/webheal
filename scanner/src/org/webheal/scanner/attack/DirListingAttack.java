@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.webheal.scanner.visitor.AttackVisitor;
 
 public class DirListingAttack extends AbstractUrlAttack
 {
@@ -63,5 +64,10 @@ public class DirListingAttack extends AbstractUrlAttack
             }
         }
         return false;
+    }
+    @Override public void accept(AttackVisitor visitor) throws Exception
+    {
+        visitor.visitDirListingAttack(this);
+        
     }
 }
